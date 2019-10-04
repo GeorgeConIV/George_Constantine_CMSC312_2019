@@ -1,3 +1,5 @@
+import commands.Operation;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,12 +10,17 @@ public class Main
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter name of program file(in current dir): ");
         String file = scanner.next();
+        boolean keepLoopGoin = true;
+
         FileManipulator fileMan = new FileManipulator(file);
         List<String> listOfCommands = fileMan.getListOfCommandsWhitespaceDelimited();
 
-        for(String command: listOfCommands)
+        Parser parse = new Parser(listOfCommands);
+
+        for(Operation command: parse.getListOfCommands())
         {
-            System.out.println(command);
+            System.out.println(command.toString());
         }
+
     }
 }
