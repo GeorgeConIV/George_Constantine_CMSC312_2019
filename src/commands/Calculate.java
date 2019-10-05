@@ -18,7 +18,7 @@ public class Calculate implements Operation
     @Override
     public String toString()
     {
-        return cyclesRemaining.toString();
+        return ("CALCULATE ".concat(cyclesRemaining.toString()));
     }
 
 

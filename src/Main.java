@@ -13,14 +13,18 @@ public class Main
         boolean keepLoopGoin = true;
 
         FileManipulator fileMan = new FileManipulator(file);
-        List<String> listOfCommands = fileMan.getListOfCommandsWhitespaceDelimited();
+        //List<String> listOfCommands = fileMan.getListOfCommandsWhitespaceDelimited();
 
-        Parser parse = new Parser(listOfCommands);
+        Parser parse = new Parser(fileMan.getListOfCommandsWhitespaceDelimited());
+        Program prog = parse.initProgramFromFile();
+        System.out.println(prog.toString());
+
+        /*Parser parse = new Parser(listOfCommands);
 
         for(Operation command: parse.getListOfCommands())
         {
             System.out.println(command.toString());
-        }
+        }*/
 
     }
 }

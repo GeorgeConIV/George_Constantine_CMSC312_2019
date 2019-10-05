@@ -44,9 +44,7 @@ public class FileManipulator
      */
     public void initFileScanner(String filetoload)
     {
-        //System.out.println("Enter in file inputFile of file to be compiled:");
-        //filePath = scanner.next();
-        filePath = System.getProperty("user.dir")+"\\progs\\"+filetoload;
+        filePath = System.getProperty("user.dir")+"/progs/"+filetoload;
         System.out.println("Getting file: " + filePath);
         try
         {
@@ -72,6 +70,8 @@ public class FileManipulator
 
         return stringList;
     }
+
+
 
     /**
      * This method will find the file name (without .extension) and file path using a regex
