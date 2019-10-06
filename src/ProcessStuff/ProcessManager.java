@@ -1,13 +1,11 @@
 package ProcessStuff;
 
-import commands.Operation;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessManager
 {
-    final Integer timeConstant = 300;
+    final Integer timeConstant = 50;
     Integer timeRemaining = timeConstant;
 
     List<Process> readyQueue = new ArrayList<>();
@@ -45,16 +43,18 @@ public class ProcessManager
             {
                 removefromRunning(active);
                 addToDone(active);
-                if(waitingQueue.size() >0)
+                if(!waitingQueue.isEmpty())
                 {
                     active = waitingQueue.get(0);
                     addToRunning(active);
                     removeFromWaitingQueue(active);
                 }
-                System.out.println(active.getProgName() + " is done!");
+                System.out.println("\n\n" + (done.get(done.size()-1).getProgName()) + " is done!");
+                System.out.println((done.get(done.size()-1)).toString());
                 testy = false;
             }
             active.runProcess();
+            timeRemaining--;
         }
 
         timeRemaining = timeConstant;
@@ -67,7 +67,7 @@ public class ProcessManager
 
     public boolean checkComplete()
     {
-        if(waitingQueue.size() == 0)
+        if(waitingQueue.isEmpty())
         {
             return true;
         }

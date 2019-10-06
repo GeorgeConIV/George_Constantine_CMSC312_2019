@@ -20,7 +20,6 @@ public class Simulator
         while(!procMan.checkComplete())
         {
             procMan.runForTime();
-            System.out.println(procMan.getActive().toString());
         }
     }
 

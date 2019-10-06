@@ -25,6 +25,6 @@ public class Out implements Operation
     @Override
     public String toString()
     {
-        return "OUT " + cycleCount.toString();
+        return "OUT " + cyclesRemaining.toString();
     }
 }
