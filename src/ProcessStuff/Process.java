@@ -1,13 +1,15 @@
+package ProcessStuff;
+
+import commands.Exe;
 import commands.Operation;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Program
+public class Process
 {
     public static enum States
     {
-        NEW{
+        NEW {
             @Override
             public String toString(){
                 return "NEW";
@@ -38,16 +40,60 @@ public class Program
     String progName;
     Integer runtime;
     Integer memory;
+    Integer programCounter = 0;
+    Integer priority; //I don't know what should determine this, so for now it shall remain unused
+    //TODO: add register simulations
 
-    List<Operation> operations = new ArrayList<>();
 
-    public Program(States state, String progName, Integer runtime, Integer memory, List<Operation> operations)
+    List<Operation> operations;
+
+    public Process(States state, String progName, Integer runtime, Integer memory, List<Operation> operations)
     {
         this.state = state;
         this.progName = progName;
         this.runtime = runtime;
         this.memory = memory;
         this.operations = operations;
+    }
+
+    public void runProcess()
+    {
+        if(state == States.RUN)
+        {
+
+            if(operations.size() <= programCounter)
+            {
+                setState(States.EXIT);
+            }
+            else if(operations.get(programCounter).getCyclesRemaining() == 0)
+            {
+                programCounter++;
+            }
+            else
+            {
+                operations.get(programCounter).Run();
+            }
+
+        }
+        else
+        {
+
+        }
+    }
+
+    public void setState(States state)
+    {
+        this.state = state;
+    }
+
+    public States getState()
+    {
+        return state;
+    }
+
+    public String getProgName()
+    {
+        return progName;
     }
 
     @Override

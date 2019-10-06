@@ -15,6 +15,11 @@ public class Calculate implements Operation
         cyclesRemaining--;
     }
 
+    public Integer getCyclesRemaining()
+    {
+        return cyclesRemaining;
+    }
+
     @Override
     public String toString()
     {

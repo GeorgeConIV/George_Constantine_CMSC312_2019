@@ -1,3 +1,4 @@
+import ProcessStuff.Process;
 import commands.*;
 
 import java.util.ArrayList;
@@ -46,9 +47,9 @@ public class Parser
         }
     }
 
-    public Program initProgramFromFile()
+    public Process initProgramFromFile()
     {
-        Program prog;
+        Process prog;
         String name;
         Integer runtime;
         Integer memory;
@@ -68,7 +69,7 @@ public class Parser
 
         listOfOps = getListOfCommands();
 
-        prog = new Program(Program.States.NEW, name, runtime, memory, listOfOps);
+        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps);
         return prog;
     }
 
@@ -126,8 +127,28 @@ public class Parser
                     cycles = Integer.parseInt(cycleString);
                     op = new IOOp(cycles);
                     break;
-                case "YIELD": op = new Yield(); break;
-                case "OUT": op = new Out(); break;
+                case "YIELD":
+                    do
+                    {
+                        charBuff = getChar();
+                        cycleString += charBuff;
+                    } while(Character.isDigit(charBuff));
+
+                    cycleString = cycleString.trim();
+                    cycles = Integer.parseInt(cycleString);
+                    op = new Yield(cycles);
+                    break;
+                case "OUT":
+                    do
+                    {
+                        charBuff = getChar();
+                        cycleString += charBuff;
+                    } while(Character.isDigit(charBuff));
+
+                    cycleString = cycleString.trim();
+                    cycles = Integer.parseInt(cycleString);
+                    op = new Out(cycles);
+                    break;
                 case "EXE": op = new Exe(); break;
             }
         }

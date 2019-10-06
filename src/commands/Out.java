@@ -2,13 +2,29 @@ package commands;
 
 public class Out implements Operation
 {
-    public Out()
+    Integer cycleCount;
+    Integer cyclesRemaining;
+    public Out(Integer cycleCount)
     {
-
+        this.cycleCount = cycleCount;
+        this.cyclesRemaining = cycleCount;
     }
+
+    @Override
+    public Integer getCyclesRemaining()
+    {
+        return cyclesRemaining;
+    }
+
     @Override
     public void Run()
     {
+        cyclesRemaining--;
+    }
 
+    @Override
+    public String toString()
+    {
+        return "OUT " + cycleCount.toString();
     }
 }
