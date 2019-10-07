@@ -16,6 +16,11 @@ public class Yield implements Operation
         return cyclesRemaining;
     }
 
+    public boolean getIO()
+    {
+        return false;
+    }
+
     @Override
     public void Run()
     {

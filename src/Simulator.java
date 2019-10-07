@@ -1,7 +1,7 @@
 import ProcessStuff.Process;
 import ProcessStuff.ProcessManager;
+import commands.IOEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Simulator
@@ -19,7 +19,7 @@ public class Simulator
     {
         while(!procMan.checkComplete())
         {
-            procMan.runForTime();
+            procMan.runForTime(new IOEvent());
         }
     }
 

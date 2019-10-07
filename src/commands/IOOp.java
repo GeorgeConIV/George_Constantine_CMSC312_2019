@@ -16,6 +16,11 @@ public class IOOp implements Operation
         cyclesRemaining--;
     }
 
+    public boolean getIO()
+    {
+        return true;
+    }
+
     @Override
     public Integer getCyclesRemaining()
     {

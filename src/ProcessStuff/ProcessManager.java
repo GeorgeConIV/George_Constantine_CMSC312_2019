@@ -1,12 +1,18 @@
 package ProcessStuff;
 
+import commands.IOEvent;
+import commands.IOOp;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessManager
 {
+    boolean verbose = false;
+
     final Integer timeConstant = 50;
     Integer timeRemaining = timeConstant;
+    Integer totalProcCount;
 
     List<Process> readyQueue = new ArrayList<>();
     List<Process> done = new ArrayList<>();
@@ -22,6 +28,7 @@ public class ProcessManager
     public void initProcMan(List<Process> waitingQueue)
     {
         this.waitingQueue = waitingQueue;
+        totalProcCount = waitingQueue.size();
         for(Process proc : waitingQueue)
         {
             proc.setState(Process.States.WAIT);
@@ -32,14 +39,72 @@ public class ProcessManager
         this.waitingQueue.remove(0);
     }
 
-    //TODO: fix this whole ass file, its a mess and done poorly,
-    //TODO: but I am too brain dead to do it properly right now
-    public void runForTime()
+    public void handleIOInterrupt(IOEvent io)
+    {
+        if(!running.isEmpty())
+        {
+            removefromRunning(active);
+            if(active.getCurrentOp() instanceof  IOOp)
+            {
+                addToIOQueue(active);
+            }
+            else
+            {
+                addToWaitingQueue(active);
+            }
+
+
+        }
+
+        active = IOQueue.get(0);
+
+        addToRunning(active);
+        removeFromIOQueue(active);
+
+        while(io.getClockCycles() > 0)
+        {
+            if(active.getState() == Process.States.EXIT && !done.contains(active))
+            {
+                removefromRunning(active);
+                addToDone(active);
+                if(!IOQueue.isEmpty())
+                {
+                    active = IOQueue.get(0);
+                    addToRunning(active);
+                    removeFromIOQueue(active);
+                }
+            }
+            active.runProcess();
+            io.decrementClockCycles();
+        }
+            removefromRunning(active);
+            addToIOQueue(active);
+
+            if(!waitingQueue.isEmpty())
+            {
+                active = waitingQueue.get(0);
+            }
+            else if(!IOQueue.isEmpty())
+            {
+                active = IOQueue.get(0);
+            }
+            else
+            {}
+
+            addToRunning(active);
+            removeFromWaitingQueue(active);
+    }
+
+    public void runForTime(IOEvent io)
     {
         boolean testy = true;
+        if(io.getTriggered() && !IOQueue.isEmpty())
+        {
+            handleIOInterrupt(io);
+        }
         while(timeRemaining > 0 && testy)
         {
-            if(active.getState() == Process.States.EXIT)
+            if(active.getState() == Process.States.EXIT && !done.contains(active))
             {
                 removefromRunning(active);
                 addToDone(active);
@@ -49,10 +114,21 @@ public class ProcessManager
                     addToRunning(active);
                     removeFromWaitingQueue(active);
                 }
-                System.out.println("\n\n" + (done.get(done.size()-1).getProgName()) + " is done!");
-                System.out.println((done.get(done.size()-1)).toString());
                 testy = false;
             }
+
+            else if(active.getCurrentOp() instanceof IOOp && !IOQueue.contains(active))
+            {
+                removefromRunning(active);
+                addToIOQueue(active);
+                if(!waitingQueue.isEmpty())
+                {
+                    active = waitingQueue.get(0);
+                    addToRunning(active);
+                    removeFromWaitingQueue(active);
+                }
+            }
+
             active.runProcess();
             timeRemaining--;
         }
@@ -67,7 +143,7 @@ public class ProcessManager
 
     public boolean checkComplete()
     {
-        if(waitingQueue.isEmpty())
+        if(done.size() == totalProcCount)
         {
             return true;
         }
@@ -79,14 +155,16 @@ public class ProcessManager
 
     private Process getNewActive()
     {
-        addToWaitingQueue(running.get(0));
-        removefromRunning(running.get(0));
+        if(!running.isEmpty() && !waitingQueue.isEmpty())
+        {
+            addToWaitingQueue(running.get(0));
+            removefromRunning(running.get(0));
 
-        active = waitingQueue.get(0);
+            active = waitingQueue.get(0);
 
-        addToRunning(waitingQueue.get(0));
-        removeFromWaitingQueue(waitingQueue.get(0));
-
+            addToRunning(waitingQueue.get(0));
+            removeFromWaitingQueue(waitingQueue.get(0));
+        }
         return active;
     }
 
@@ -103,34 +181,65 @@ public class ProcessManager
 
     private void addToWaitingQueue(Process proc)
     {
-        proc.setState(Process.States.WAIT);
-        waitingQueue.add(proc);
+        if(proc.getState() != Process.States.EXIT && !waitingQueue.contains(proc))
+        {
+            proc.setState(Process.States.WAIT);
+            waitingQueue.add(proc);
+            if(verbose)
+                System.out.println("[Scheduler]Added process: " + proc.getProgName() + " to waiting queue");
+        }
     }
 
     private void removeFromWaitingQueue(Process proc)
     {
         waitingQueue.remove(proc);
+        if(verbose)
+            System.out.println("[Scheduler]Removed process: " + proc.getProgName() + " from waiting queue");
     }
 
     private void addToRunning(Process proc)
     {
-        proc.setState(Process.States.RUN);
-        running.add(proc);
+        if(!running.contains(proc))
+        {
+            proc.setState(Process.States.RUN);
+            running.add(proc);
+            if(verbose)
+                System.out.println("[Scheduler]Added process: " + proc.getProgName() + " to running queue");
+        }
     }
 
     private void removefromRunning(Process proc)
     {
         running.remove(proc);
+        if(verbose)
+            System.out.println("[Scheduler]Removed process: " + proc.getProgName() + " from running queue");
     }
 
     public void addToDone(Process proc)
     {
-        done.add(proc);
+        if(!done.contains(proc))
+        {
+            proc.setState(Process.States.EXIT);
+            done.add(proc);
+            System.out.println("[Scheduler]----------------------Process: " + proc.getProgName() + " is done!---------------");
+        }
     }
 
     private void addToIOQueue(Process proc)
     {
-        IOQueue.add(proc);
+        if(proc.getState() != Process.States.EXIT && !IOQueue.contains(proc))
+        {
+            proc.setState(Process.States.WAIT);
+            IOQueue.add(proc);
+            if(verbose)
+                System.out.println("[Scheduler]Added process: " + proc.getProgName() + " to IO queue");
+        }
+    }
+    private void removeFromIOQueue(Process proc)
+    {
+        IOQueue.remove(proc);
+        if(verbose)
+            System.out.println("[Scheduler]Removed process: " + proc.getProgName() + " from IO queue");
     }
 
     public Process getActive()

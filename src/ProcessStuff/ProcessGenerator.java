@@ -39,6 +39,7 @@ public class ProcessGenerator
                 }
                 opCount--;
             }
+            opList.add(new IOOp(10));
             proc = new Process(Process.States.NEW, "P"+amount.toString(), 300, 45, opList);
             amount--;
             procs.add(proc);

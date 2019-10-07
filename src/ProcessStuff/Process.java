@@ -54,14 +54,14 @@ public class Process
         this.runtime = runtime;
         this.memory = memory;
         this.operations = operations;
+        System.out.println("Created process: " + progName);
     }
 
     public void runProcess()
     {
         if(state == States.RUN)
         {
-
-            if(operations.size() <= programCounter)
+            if(programCounter == (operations.size()))
             {
                 setState(States.EXIT);
             }
@@ -73,11 +73,34 @@ public class Process
             {
                 operations.get(programCounter).Run();
             }
-
         }
         else
         {
 
+        }
+    }
+
+    public Operation getCurrentOp()
+    {
+        if(state!=States.EXIT)
+        {
+            return operations.get(getProgramCounter());
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public Integer getProgramCounter()
+    {
+        if(programCounter == operations.size())
+        {
+            return programCounter-1;
+        }
+        else
+        {
+            return programCounter;
         }
     }
 

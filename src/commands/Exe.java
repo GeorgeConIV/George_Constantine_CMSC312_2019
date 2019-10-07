@@ -11,6 +11,11 @@ public class Exe implements Operation
         cyclesRemaining = 0;
     }
 
+    public boolean getIO()
+    {
+       return false;
+    }
+
     @Override
     public Integer getCyclesRemaining()
     {

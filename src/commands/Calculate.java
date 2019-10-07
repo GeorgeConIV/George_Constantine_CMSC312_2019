@@ -20,6 +20,11 @@ public class Calculate implements Operation
         return cyclesRemaining;
     }
 
+    public boolean getIO()
+    {
+        return false;
+    }
+
     @Override
     public String toString()
     {
