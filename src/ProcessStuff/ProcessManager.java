@@ -2,6 +2,8 @@ package ProcessStuff;
 
 import commands.IOEvent;
 import commands.IOOp;
+import commands.Out;
+import commands.Yield;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +117,10 @@ public class ProcessManager
                     removeFromWaitingQueue(active);
                 }
                 testy = false;
+            }
+            else if(active.getCurrentOp() instanceof Yield)
+            {
+                getNewActive();
             }
 
             else if(active.getCurrentOp() instanceof IOOp && !IOQueue.contains(active))

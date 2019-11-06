@@ -3,6 +3,7 @@ import commands.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,7 +88,7 @@ public class Parser
 
     public Operation getOp()
     {
-        Operation op = new Calculate(1);
+        Operation op = new Calculate(1, false, Optional.empty());
         Integer cycles = 0;
         String cycleString = "";
         String opString = "";
@@ -114,7 +115,7 @@ public class Parser
 
                     cycleString = cycleString.trim();
                     cycles = Integer.parseInt(cycleString);
-                    op = new Calculate(cycles);
+                    op = new Calculate(cycles, false, Optional.empty());
                     break;
                 case  "I/O":
                     do
@@ -135,8 +136,7 @@ public class Parser
                     } while(Character.isDigit(charBuff));
 
                     cycleString = cycleString.trim();
-                    cycles = Integer.parseInt(cycleString);
-                    op = new Yield(cycles);
+                    op = new Yield();
                     break;
                 case "OUT":
                     do
@@ -145,9 +145,7 @@ public class Parser
                         cycleString += charBuff;
                     } while(Character.isDigit(charBuff));
 
-                    cycleString = cycleString.trim();
-                    cycles = Integer.parseInt(cycleString);
-                    op = new Out(cycles);
+                    op = new Out();
                     break;
                 case "EXE": op = new Exe(); break;
             }

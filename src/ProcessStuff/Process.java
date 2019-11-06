@@ -2,7 +2,10 @@ package ProcessStuff;
 
 import commands.Exe;
 import commands.Operation;
+import commands.Out;
+import commands.Yield;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Process
@@ -61,11 +64,17 @@ public class Process
     {
         if(state == States.RUN)
         {
+
             if(programCounter == (operations.size()))
             {
                 setState(States.EXIT);
             }
-            else if(operations.get(programCounter).getCyclesRemaining() == 0)
+            else if(operations.get(programCounter) instanceof Out)
+            {
+                System.out.println(this.toString());
+                programCounter++;
+            }
+            else if(operations.get(programCounter).getCyclesRemaining() == 0 || operations.get(programCounter) instanceof Yield)
             {
                 programCounter++;
             }

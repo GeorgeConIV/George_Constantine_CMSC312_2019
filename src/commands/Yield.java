@@ -2,18 +2,15 @@ package commands;
 
 public class Yield implements Operation
 {
-    Integer cycleCount;
-    Integer cyclesRemaining;
-    public Yield(Integer cycleCount)
+    int currentCycles = 1;
+    public Yield()
     {
-        this.cycleCount = cycleCount;
-        this.cyclesRemaining = cycleCount;
     }
 
     @Override
     public Integer getCyclesRemaining()
     {
-        return cyclesRemaining;
+        return 1;
     }
 
     public boolean getIO()
@@ -24,12 +21,12 @@ public class Yield implements Operation
     @Override
     public void Run()
     {
-        cyclesRemaining--;
+        currentCycles--;
     }
 
     @Override
     public String toString()
     {
-        return "YIELD " + cyclesRemaining.toString();
+        return "YIELD";
     }
 }

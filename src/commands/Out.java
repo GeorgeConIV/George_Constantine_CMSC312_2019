@@ -2,18 +2,14 @@ package commands;
 
 public class Out implements Operation
 {
-    Integer cycleCount;
-    Integer cyclesRemaining;
-    public Out(Integer cycleCount)
+    public Out()
     {
-        this.cycleCount = cycleCount;
-        this.cyclesRemaining = cycleCount;
     }
 
     @Override
     public Integer getCyclesRemaining()
     {
-        return cyclesRemaining;
+        return 0;
     }
 
     public boolean getIO()
@@ -24,12 +20,12 @@ public class Out implements Operation
     @Override
     public void Run()
     {
-        cyclesRemaining--;
+
     }
 
     @Override
     public String toString()
     {
-        return "OUT " + cyclesRemaining.toString();
+        return "OUT";
     }
 }
