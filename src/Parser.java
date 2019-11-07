@@ -70,7 +70,7 @@ public class Parser
 
         listOfOps = getListOfCommands();
 
-        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps);
+        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0);
         return prog;
     }
 

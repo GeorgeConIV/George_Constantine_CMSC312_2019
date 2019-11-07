@@ -12,6 +12,7 @@ public class ProcessGenerator
     Double opType;
     Double critChance;
     int varSel;
+    int priority;
     int opLegth;
 
 
@@ -40,11 +41,11 @@ public class ProcessGenerator
             while (opCount > 0) {
                 opType = Math.random();
                 opLegth = (int) ((Math.random() * 100) + 10);
-                if (opType < 0.25) {
+                if (opType < 0.6) {
                     opList.add(new Calculate(opLegth, false, Optional.empty()));
-                } else if (opType < 0.50) {
+                } else if (opType < 0.7) {
                     opList.add(new IOOp(opLegth));
-                } else if (opType < 0.75) {
+                } else if (opType < 0.9) {
                     opList.add(new Out());
                 } else if (opType <= 1.0) {
                     opList.add(new Yield());
@@ -52,11 +53,11 @@ public class ProcessGenerator
                 opCount--;
             }
             varSel = (int) ((Math.random() * 5));
-
+            priority = (int) (Math.random() * 10);
             //adding a critical section for each process, and a io operation for each process
             opList.add(new Calculate(50, true, Optional.of(possibleVars.get(varSel))));
             opList.add(new IOOp(10));
-            proc = new Process(Process.States.NEW, "P"+amount.toString(), 300, 45, opList);
+            proc = new Process(Process.States.NEW, "P"+amount.toString(), 300, 45, opList, priority);
             amount--;
             procs.add(proc);
         }

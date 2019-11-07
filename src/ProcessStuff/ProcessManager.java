@@ -2,10 +2,10 @@ package ProcessStuff;
 
 import commands.IOEvent;
 import commands.IOOp;
-import commands.Out;
 import commands.Yield;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ProcessManager
@@ -171,7 +171,19 @@ public class ProcessManager
             addToRunning(waitingQueue.get(0));
             removeFromWaitingQueue(waitingQueue.get(0));
         }
+
         return active;
+    }
+
+    public void orderWaiting()
+    {
+        Collections.sort(waitingQueue);
+        if(waitingQueue.size() > 1) {
+            System.out.println("-----------NEW WAITING QUEUE ORDER--------");
+            for (Process p : waitingQueue) {
+                System.out.println(p.getProgName());
+            }
+        }
     }
 
     private void addToReadyQueue(Process proc)
@@ -190,6 +202,7 @@ public class ProcessManager
         if(proc.getState() != Process.States.EXIT && !waitingQueue.contains(proc))
         {
             proc.setState(Process.States.WAIT);
+            orderWaiting();
             waitingQueue.add(proc);
             if(verbose)
                 System.out.println("[Scheduler]Added process: " + proc.getProgName() + " to waiting queue");

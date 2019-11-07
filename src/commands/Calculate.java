@@ -46,7 +46,10 @@ public class Calculate implements Operation
     @Override
     public String toString()
     {
-        return ("CALCULATE ".concat(cyclesRemaining.toString()));
+        if(!hasCrit)
+            return ("CALCULATE ".concat(cyclesRemaining.toString()));
+        else
+            return ("CALCULATE ".concat(cyclesRemaining.toString()).concat(" CRIT VAR: ").concat(critVar.toString()));
     }
 
 

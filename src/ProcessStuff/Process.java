@@ -8,7 +8,7 @@ import commands.Yield;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Process
+public class Process implements Comparable<Process>
 {
     public static enum States
     {
@@ -44,19 +44,20 @@ public class Process
     Integer runtime;
     Integer memory;
     Integer programCounter = 0;
-    Integer priority; //I don't know what should determine this, so for now it shall remain unused
+    Integer priority = 0; //I don't know what should determine this, so for now it shall remain unused
     //TODO: add register simulations
 
 
     List<Operation> operations;
 
-    public Process(States state, String progName, Integer runtime, Integer memory, List<Operation> operations)
+    public Process(States state, String progName, Integer runtime, Integer memory, List<Operation> operations, Integer priority)
     {
         this.state = state;
         this.progName = progName;
         this.runtime = runtime;
         this.memory = memory;
         this.operations = operations;
+        this.priority = priority;
         System.out.println("Created process: " + progName);
     }
 
@@ -128,6 +129,17 @@ public class Process
         return progName;
     }
 
+    public int getPriority()
+    {
+        return priority;
+    }
+
+    @Override
+    public int compareTo(Process proc)
+    {
+        return priority.compareTo(proc.getPriority());
+    }
+
     @Override
     public String toString()
     {
@@ -139,9 +151,20 @@ public class Process
         return "-------PROGRAM INFO-------"
                 + "\nState: " + state.toString()
                 + "\nName: " + progName
+                + "\nPriority: " + priority
                 + "\nTotal Runtime: " + runtime.toString()
                 + "\nMemory: " + memory.toString()
                 + "\nOperations: \n" + longString;
     }
 
 }
+/**
+ * p6 = 3
+ * p5 = 1
+ * p4 = 2
+ * p3 = 0
+ * p2 = 3
+ * p1 = 0
+ *
+ *
+ */
