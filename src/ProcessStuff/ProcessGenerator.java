@@ -10,7 +10,7 @@ public class ProcessGenerator
 {
     Double opCount;
     Double opType;
-    Double critChance;
+    Double genChild;
     int varSel;
     int priority;
     int opLegth;
@@ -20,6 +20,38 @@ public class ProcessGenerator
 
     public List<Process> generateRandomProcess(Integer amount) {
         List<Process> procs = new ArrayList<>();
+        Process proc;
+
+        while(amount > 0)
+        {
+
+            genChild = Math.random();
+
+            //Will randomly generate a process with a child process
+            if(genChild > 0.6) {
+                proc = generateProcess(amount, false);
+                Process child = generateProcess(amount, true);
+                proc.createChild(child);
+                child.setParent(proc);
+                procs.add(proc);
+                procs.add(child);
+            }
+            else
+            {
+                proc = generateProcess(amount, false);
+                procs.add(proc);
+            }
+            amount--;
+
+        }
+        return procs;
+    }
+
+    private Process generateProcess(int amount, boolean isChild)
+    {
+        opCount = Math.random();
+        opCount = (opCount * 5) + 3;
+        List<Operation> opList = new ArrayList<>();
 
         List<Character> possibleVars = new ArrayList<>();  //possible values for the critical section var
         possibleVars.add('i');
@@ -29,38 +61,31 @@ public class ProcessGenerator
         possibleVars.add('w');
         possibleVars.add('z');
 
-        while(amount > 0)
-        {
-            List<Operation> opList = new ArrayList<>();
-
-            Process proc;
-
-            opCount = Math.random();
-            opCount = (opCount * 5) + 3;
-
-            while (opCount > 0) {
-                opType = Math.random();
-                opLegth = (int) ((Math.random() * 100) + 10);
-                if (opType < 0.6) {
-                    opList.add(new Calculate(opLegth, false, Optional.empty()));
-                } else if (opType < 0.7) {
-                    opList.add(new IOOp(opLegth));
-                } else if (opType < 0.9) {
-                    opList.add(new Out());
-                } else if (opType <= 1.0) {
-                    opList.add(new Yield());
-                }
-                opCount--;
+        while (opCount > 0) {
+            opType = Math.random();
+            opLegth = (int) ((Math.random() * 100) + 10);
+            if (opType < 0.6) {
+                opList.add(new Calculate(opLegth, false, Optional.empty()));
+            } else if (opType < 0.7) {
+                opList.add(new IOOp(opLegth));
+            } else if (opType < 0.9) {
+                opList.add(new Out());
+            } else if (opType <= 1.0) {
+                opList.add(new Yield());
             }
-            varSel = (int) ((Math.random() * 5));
-            priority = (int) (Math.random() * 10);
-            //adding a critical section for each process, and a io operation for each process
-            opList.add(new Calculate(50, true, Optional.of(possibleVars.get(varSel))));
-            opList.add(new IOOp(10));
-            proc = new Process(Process.States.NEW, "P"+amount.toString(), 300, 45, opList, priority);
-            amount--;
-            procs.add(proc);
+            opCount--;
         }
-        return procs;
+        varSel = (int) ((Math.random() * 5));
+        priority = (int) (Math.random() * 10);
+        //adding a critical section for each process, and a io operation for each process
+        opList.add(new Calculate(50, true, Optional.of(possibleVars.get(varSel))));
+        opList.add(new IOOp(10));
+        String name;
+        int memory = (int) (Math.random() * 160000000);
+        if(isChild)
+            name = "P" + amount + "'s child";
+        else
+            name = "P" + amount;
+        return new Process(Process.States.NEW, name, 300, memory, opList, priority);
     }
 }

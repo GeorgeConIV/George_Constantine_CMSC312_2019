@@ -21,20 +21,29 @@ public class ProcessManager
     List<Process> waitingQueue = new ArrayList<>();
     List<Process> running = new ArrayList<>();
     List<Process> IOQueue = new ArrayList();
+    List<Process> parents = new ArrayList();
 
     Process active;
 
     public ProcessManager() {}
 
     //TODO: add the gosh darn threading stuff
+    //TODO: fix the issue with the IO queue fucking up the parent/child thing
+    //You might wanna try to rewrite how parent and child processes interact,
+    //Instead of having the child need to finish before the parent, just
+    //have the parent kill the child on exit and treat the child as any other
     public void initProcMan(List<Process> waitingQueue)
     {
         this.waitingQueue = waitingQueue;
         totalProcCount = waitingQueue.size();
+
+        for(Process p : waitingQueue)
+            if(!p.hasParent())
+                parents.add(p);
+
         for(Process proc : waitingQueue)
-        {
             proc.setState(Process.States.WAIT);
-        }
+
         this.running.add(waitingQueue.get(0));
         this.running.get(0).setState(Process.States.RUN);
         this.active = this.running.get(0);
@@ -69,6 +78,10 @@ public class ProcessManager
             {
                 removefromRunning(active);
                 addToDone(active);
+                if(active.hasChild())
+                {
+                    killChild(active);
+                }
                 if(!IOQueue.isEmpty())
                 {
                     active = IOQueue.get(0);
@@ -110,6 +123,10 @@ public class ProcessManager
             {
                 removefromRunning(active);
                 addToDone(active);
+                if(active.hasChild())
+                {
+                    killChild(active);
+                }
                 if(!waitingQueue.isEmpty())
                 {
                     active = waitingQueue.get(0);
@@ -149,14 +166,15 @@ public class ProcessManager
 
     public boolean checkComplete()
     {
-        if(done.size() == totalProcCount)
-        {
+        boolean parentsDone = true;
+        for(Process p : parents)
+            if(p.getState() != Process.States.EXIT)
+                parentsDone = false;
+
+        if(parentsDone)
             return true;
-        }
         else
-        {
             return false;
-        }
     }
 
     private Process getNewActive()
@@ -184,6 +202,20 @@ public class ProcessManager
                 System.out.println(p.getProgName());
             }
         }
+    }
+
+    private void killChild(Process daddy)
+    {
+        if(waitingQueue.contains(daddy.getChild()))
+            waitingQueue.remove(daddy.getChild());
+        if(IOQueue.contains(daddy.getChild()))
+            IOQueue.remove(daddy.getChild());
+        if(running.contains(daddy.getChild()))
+            running.remove(daddy.getChild());
+        if(readyQueue.contains(daddy.getChild()))
+            readyQueue.remove(daddy.getChild());
+
+        daddy.killChild();
     }
 
     private void addToReadyQueue(Process proc)

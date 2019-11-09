@@ -20,7 +20,7 @@ public class Simulator
         while(!procMan.checkComplete())
         {
             procMan.runForTime(new IOEvent());
-            //procMan.orderWaiting();
+
         }
     }
 

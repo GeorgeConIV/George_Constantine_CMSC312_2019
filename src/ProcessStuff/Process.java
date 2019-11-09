@@ -4,6 +4,7 @@ import commands.Exe;
 import commands.Operation;
 import commands.Out;
 import commands.Yield;
+import memory.PageTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +40,19 @@ public class Process implements Comparable<Process>
             }
         }
     }
-    States state;
-    String progName;
-    Integer runtime;
-    Integer memory;
-    Integer programCounter = 0;
-    Integer priority = 0; //I don't know what should determine this, so for now it shall remain unused
+    private States state;
+    private String progName;
+    private Integer runtime;
+    private Integer memory;
+    private Integer programCounter = 0;
+    private Integer priority = 0;
+    private Process child;
+    private boolean hasChild = false;
+    private Process parent;
+    private boolean hasParent = false;
     //TODO: add register simulations
 
+    static PageTable memoryMan = new PageTable();
 
     List<Operation> operations;
 
@@ -56,6 +62,7 @@ public class Process implements Comparable<Process>
         this.progName = progName;
         this.runtime = runtime;
         this.memory = memory;
+        memoryMan.allocateMem(memory);
         this.operations = operations;
         this.priority = priority;
         System.out.println("Created process: " + progName);
@@ -65,7 +72,6 @@ public class Process implements Comparable<Process>
     {
         if(state == States.RUN)
         {
-
             if(programCounter == (operations.size()))
             {
                 setState(States.EXIT);
@@ -83,10 +89,6 @@ public class Process implements Comparable<Process>
             {
                 operations.get(programCounter).Run();
             }
-        }
-        else
-        {
-
         }
     }
 
@@ -134,6 +136,44 @@ public class Process implements Comparable<Process>
         return priority;
     }
 
+    public void setParent(Process proc)
+    {
+        parent = proc;
+        hasParent = true;
+    }
+
+    public void killChild()
+    {
+        hasChild = false;
+    }
+
+    public Process getParent()
+    {
+        return parent;
+    }
+
+    public void createChild(Process proc)
+    {
+        child = proc;
+        child.setParent(this);
+        hasChild = true;
+    }
+
+    public Process getChild()
+    {
+        return child;
+    }
+
+    public boolean hasChild()
+    {
+        return hasChild;
+    }
+
+    public boolean hasParent()
+    {
+        return hasParent;
+    }
+
     @Override
     public int compareTo(Process proc)
     {
@@ -148,23 +188,17 @@ public class Process implements Comparable<Process>
         {
             longString = longString.concat("\n" + ops.toString());
         }
-        return "-------PROGRAM INFO-------"
+        String str = "-------PROGRAM INFO-------"
                 + "\nState: " + state.toString()
                 + "\nName: " + progName
                 + "\nPriority: " + priority
                 + "\nTotal Runtime: " + runtime.toString()
                 + "\nMemory: " + memory.toString()
                 + "\nOperations: \n" + longString;
+        if(hasChild)
+            str = str.concat("\n" + progName +" CHILD:\n" + child.toString());
+
+        return str;
     }
 
 }
-/**
- * p6 = 3
- * p5 = 1
- * p4 = 2
- * p3 = 0
- * p2 = 3
- * p1 = 0
- *
- *
- */
