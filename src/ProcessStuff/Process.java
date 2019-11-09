@@ -50,7 +50,6 @@ public class Process implements Comparable<Process>
     private boolean hasChild = false;
     private Process parent;
     private boolean hasParent = false;
-    //TODO: add register simulations
 
     static PageTable memoryMan = new PageTable();
 
