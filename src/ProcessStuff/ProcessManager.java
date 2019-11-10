@@ -82,6 +82,7 @@ public class ProcessManager
                 {
                     killChild(active);
                 }
+                active.killProc();
                 if(!IOQueue.isEmpty())
                 {
                     active = IOQueue.get(0);
@@ -127,6 +128,7 @@ public class ProcessManager
                 {
                     killChild(active);
                 }
+                active.killProc();
                 if(!waitingQueue.isEmpty())
                 {
                     active = waitingQueue.get(0);

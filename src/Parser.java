@@ -1,5 +1,6 @@
 import ProcessStuff.Process;
 import commands.*;
+import memory.PageTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.regex.Pattern;
 
 public class Parser
 {
+    PageTable mem;
     List<String> preParsed;
     List<Operation> parsed = new ArrayList<>();
     String preParseString = "";
@@ -30,8 +32,9 @@ public class Parser
 
 
 
-    public Parser(List<String> preParesed)
+    public Parser(List<String> preParesed, PageTable mem)
     {
+        this.mem = mem;
         this.preParsed = preParesed;
         for(String s: preParesed)
         {
@@ -70,7 +73,7 @@ public class Parser
 
         listOfOps = getListOfCommands();
 
-        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0);
+        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0, mem);
         return prog;
     }
 

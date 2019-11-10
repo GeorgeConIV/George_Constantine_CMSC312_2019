@@ -4,7 +4,7 @@ import commands.IOEvent;
 
 import java.util.List;
 
-public class Simulator
+public class Simulator implements Runnable
 {
     List<Process> startList;
     ProcessManager procMan = new ProcessManager();
@@ -17,11 +17,15 @@ public class Simulator
 
     public void simulate()
     {
+        run();
+    }
+
+    @Override
+    public void run()
+    {
         while(!procMan.checkComplete())
         {
             procMan.runForTime(new IOEvent());
-
         }
     }
-
 }

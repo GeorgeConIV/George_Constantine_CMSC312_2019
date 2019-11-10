@@ -24,7 +24,7 @@ public class Frame
         }
         else
         {
-            System.out.println("Memory error: attempting to allocate memory that is allocated");
+            System.out.println("[MEMORY] Memory error: attempting to allocate memory that is allocated");
             return this;
         }
     }
@@ -37,7 +37,7 @@ public class Frame
         }
         else
         {
-            System.out.println("Memory error: attempting to deallocate memory that is deallocated");
+            System.out.println("[MEMORY] Memory error: attempting to deallocate memory that is deallocated");
         }
     }
 

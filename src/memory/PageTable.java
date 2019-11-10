@@ -3,7 +3,7 @@ package memory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PageTable
+public class PageTable implements Runnable
 {
     private double pageSize = 8000000; //byte size of a page
     private double memTotal = 4000000000.0;
@@ -15,6 +15,7 @@ public class PageTable
     private List<PageTableEntry> pageTable = new ArrayList<>();
     private List<Page> pages = new ArrayList<>();
     private List<Frame> frames = new ArrayList<>();
+    private List<Frame> freeFrames = new ArrayList<>();
 
     public PageTable()
     {
@@ -32,44 +33,70 @@ public class PageTable
 
             intPages++;
         }
+        freeFrames = frames;
     }
 
     /**
      * allocates memory for a process
      * @param memNeeded byte amount needed for process
      */
-    public List<Page> allocateMem(Integer memNeeded)
+    public List<PageTableEntry> allocateMem(Integer memNeeded)
     {
         double memNeededed = memNeeded;
         double pagesNeeded = Math.ceil(memNeededed/pageSize);
         int procPageCount = (int)pagesNeeded;
-        List<Page> allocatedPages = new ArrayList<>();
+        List<PageTableEntry> allocatedPages = new ArrayList<>();
+
+        int memRemaining = ((int)pageCount) - currentPage;
+
+        if(procPageCount > memRemaining)
+        {
+            System.out.println("[PAGE TABLE] Not enough free memory to allocate");
+            return allocatedPages;
+        }
 
         while(pagesNeeded > 0)
         {
             for(int i=0; i<pageCount; i++)
             {
-                if(frames.get(i).getFree())
+                if(!pageTable.get(i).getBit())
                 {
-                    pageTable.get(currentPage).setFrame(frames.get(i).allocate());
-                    pageTable.get(currentPage).setBit(true);
-                    allocatedPages.add(pageTable.get(currentPage).getPage());
+                    pageTable.get(i).setFrame(frames.get(i).allocate());
+                    pageTable.get(i).setBit(true);
+                    allocatedPages.add(pageTable.get(i));
                     currentPage++;
                     break;
                 }
             }
             pagesNeeded--;
         }
-        System.out.println("Allocated: " + procPageCount + " pages of memory");
+        System.out.println("[PAGE TABLE] Allocated: " + procPageCount + " pages of memory");
         return allocatedPages;
     }
 
-    public void deallocateMem(List<Page> dePage)
+
+
+
+    public void deallocateMem(List<PageTableEntry> dePage)
     {
-        for(Page p : dePage)
+        for(PageTableEntry p : dePage)
         {
-            pageTable.get(p.getPageID()).setBit(false);
+            System.out.println("[PAGE TABLE] Deallocated page: " + p.getPage().getPageID());
+            pageTable.get(p.getPage().getPageID()).setBit(false);
+            pageTable.get(p.getPage().getPageID()).getFrame().deallocate();
+            currentPage--;
         }
     }
 
+    private void deMem(List<PageTableEntry> dePage)
+    {
+
+    }
+
+    //TODO: make this actually work
+    @Override
+    public void run()
+    {
+
+    }
 }

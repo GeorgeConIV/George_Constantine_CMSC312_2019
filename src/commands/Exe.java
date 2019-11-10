@@ -10,7 +10,7 @@ public class Exe implements Operation
         cycleCount = 0;
         cyclesRemaining = 0;
     }
-
+    public boolean critical() { return false; }
     public boolean getIO()
     {
        return false;

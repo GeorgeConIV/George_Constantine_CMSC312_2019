@@ -6,6 +6,7 @@
 
 import ProcessStuff.Process;
 import ProcessStuff.ProcessGenerator;
+import memory.PageTable;
 
 import java.util.List;
 import java.util.Scanner;
@@ -18,8 +19,13 @@ public class Main
         System.out.println("Enter number of processes to be generated: ");
         Integer num = Integer.parseInt(scanner.next());
 
+        PageTable pt = new PageTable();
+
+        Thread t1 = new Thread(pt);
+        t1.start();
+
         List<Process> processes;
-        ProcessGenerator pGen = new ProcessGenerator();
+        ProcessGenerator pGen = new ProcessGenerator(pt);
 
         processes = pGen.generateRandomProcess(num);
         for(Process command: processes)
@@ -29,6 +35,8 @@ public class Main
 
 
         Simulator sim = new Simulator(processes);
-        sim.simulate();
+        Thread t2 = new Thread(sim);
+        t2.start();
+
     }
 }

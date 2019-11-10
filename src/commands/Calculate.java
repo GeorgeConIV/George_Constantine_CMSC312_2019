@@ -20,6 +20,11 @@ public class Calculate implements Operation
             this.critVar = '0';
     }
 
+    public boolean critical()
+    {
+        return hasCrit;
+    }
+
     public void Run()
     {
         cyclesRemaining--;

@@ -10,7 +10,7 @@ public class IOOp implements Operation
         this.cyclesRemaining = cycleCount;
         this.cycleCount = cycleCount;
     }
-
+    public boolean critical() { return false; }
     public void Run()
     {
         cyclesRemaining--;

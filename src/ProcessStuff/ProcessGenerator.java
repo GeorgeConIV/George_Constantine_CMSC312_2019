@@ -1,6 +1,7 @@
 package ProcessStuff;
 
 import commands.*;
+import memory.PageTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +15,13 @@ public class ProcessGenerator
     int varSel;
     int priority;
     int opLegth;
+    PageTable memoryMan;
 
 
-    public ProcessGenerator() {}
+    public ProcessGenerator(PageTable memoryMan)
+    {
+        this.memoryMan = memoryMan;
+    }
 
     public List<Process> generateRandomProcess(Integer amount) {
         List<Process> procs = new ArrayList<>();
@@ -86,6 +91,6 @@ public class ProcessGenerator
             name = "P" + amount + "'s child";
         else
             name = "P" + amount;
-        return new Process(Process.States.NEW, name, 300, memory, opList, priority);
+        return new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan);
     }
 }

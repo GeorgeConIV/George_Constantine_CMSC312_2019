@@ -1,12 +1,11 @@
 package ProcessStuff;
 
-import commands.Exe;
 import commands.Operation;
 import commands.Out;
 import commands.Yield;
 import memory.PageTable;
+import memory.PageTableEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Process implements Comparable<Process>
@@ -54,17 +53,20 @@ public class Process implements Comparable<Process>
     static PageTable memoryMan = new PageTable();
 
     List<Operation> operations;
+    private List<PageTableEntry> memSpace;
 
-    public Process(States state, String progName, Integer runtime, Integer memory, List<Operation> operations, Integer priority)
+    public Process(States state, String progName, Integer runtime,
+                   Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan)
     {
         this.state = state;
         this.progName = progName;
         this.runtime = runtime;
         this.memory = memory;
-        memoryMan.allocateMem(memory);
+        this.memoryMan = memoryMan;
+        memSpace = this.memoryMan.allocateMem(memory);
         this.operations = operations;
         this.priority = priority;
-        System.out.println("Created process: " + progName);
+        System.out.println("[PROCESS] Created process: " + progName);
     }
 
     public void runProcess()
@@ -144,6 +146,12 @@ public class Process implements Comparable<Process>
     public void killChild()
     {
         hasChild = false;
+        memoryMan.deallocateMem(child.getMemSpace());
+    }
+
+    public List<PageTableEntry> getMemSpace()
+    {
+        return memSpace;
     }
 
     public Process getParent()
@@ -166,6 +174,19 @@ public class Process implements Comparable<Process>
     public boolean hasChild()
     {
         return hasChild;
+    }
+
+    public void killProc()
+    {
+        memoryMan.deallocateMem(memSpace);
+        if(hasParent)
+        {
+            parent.hasChild = false;
+        }
+        if(hasChild)
+        {
+            killChild();
+        }
     }
 
     public boolean hasParent()

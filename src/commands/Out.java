@@ -16,7 +16,7 @@ public class Out implements Operation
     {
         return false;
     }
-
+    public boolean critical() { return false; }
     @Override
     public void Run()
     {
