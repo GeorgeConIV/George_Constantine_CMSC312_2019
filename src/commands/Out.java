@@ -16,6 +16,7 @@ public class Out implements Operation
     {
         return false;
     }
+    public Character getCritVar() {return '@';}
     public boolean critical() { return false; }
     @Override
     public void Run()

@@ -15,6 +15,7 @@ public class ProcessManager
     final Integer timeConstant = 50;
     Integer timeRemaining = timeConstant;
     Integer totalProcCount;
+    boolean semAdded = true;
 
     List<Process> readyQueue = new ArrayList<>();
     List<Process> done = new ArrayList<>();
@@ -22,6 +23,7 @@ public class ProcessManager
     List<Process> running = new ArrayList<>();
     List<Process> IOQueue = new ArrayList();
     List<Process> parents = new ArrayList();
+    List<Semaphore> sems = new ArrayList<>();
 
     Process active;
 
@@ -48,6 +50,8 @@ public class ProcessManager
         this.running.get(0).setState(Process.States.RUN);
         this.active = this.running.get(0);
         this.waitingQueue.remove(0);
+
+
     }
 
     public void handleIOInterrupt(IOEvent io)
@@ -137,6 +141,7 @@ public class ProcessManager
                 }
                 testy = false;
             }
+
             else if(active.getCurrentOp() instanceof Yield)
             {
                 getNewActive();
@@ -155,6 +160,7 @@ public class ProcessManager
             }
 
             active.runProcess();
+
             timeRemaining--;
         }
 

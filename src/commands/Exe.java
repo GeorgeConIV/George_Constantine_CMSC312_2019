@@ -10,6 +10,8 @@ public class Exe implements Operation
         cycleCount = 0;
         cyclesRemaining = 0;
     }
+    public Character getCritVar() {return '@';}
+
     public boolean critical() { return false; }
     public boolean getIO()
     {

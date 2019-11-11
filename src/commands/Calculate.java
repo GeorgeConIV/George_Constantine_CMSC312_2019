@@ -40,10 +40,6 @@ public class Calculate implements Operation
         return false;
     }
 
-    public Boolean getHasCrit(){
-        return hasCrit;
-    }
-
     public Character getCritVar(){
         return critVar;
     }

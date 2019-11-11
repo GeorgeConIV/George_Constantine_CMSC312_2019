@@ -7,7 +7,7 @@ public class IOEvent
 
     public IOEvent()
     {
-        if(Math.random() > 0.1)
+        if(Math.random() < 0.1)
         {
             triggered = true;
             clockCycles = (int)(Math.random() * 50);

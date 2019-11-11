@@ -6,4 +6,5 @@ public interface Operation
     public void Run();
     public boolean critical();
     public Integer getCyclesRemaining();
+    public Character getCritVar();
 }

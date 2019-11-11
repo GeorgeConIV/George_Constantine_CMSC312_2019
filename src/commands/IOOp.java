@@ -11,6 +11,7 @@ public class IOOp implements Operation
         this.cycleCount = cycleCount;
     }
     public boolean critical() { return false; }
+    public Character getCritVar() {return '@';}
     public void Run()
     {
         cyclesRemaining--;

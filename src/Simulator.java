@@ -27,5 +27,6 @@ public class Simulator implements Runnable
         {
             procMan.runForTime(new IOEvent());
         }
+        System.out.println("[SIMULATOR] Completed batch of generated processes");
     }
 }

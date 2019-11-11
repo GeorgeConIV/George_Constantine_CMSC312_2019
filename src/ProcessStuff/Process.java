@@ -6,6 +6,7 @@ import commands.Yield;
 import memory.PageTable;
 import memory.PageTableEntry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Process implements Comparable<Process>
@@ -49,11 +50,14 @@ public class Process implements Comparable<Process>
     private boolean hasChild = false;
     private Process parent;
     private boolean hasParent = false;
+    private boolean semAdded = true;
 
     static PageTable memoryMan = new PageTable();
 
     List<Operation> operations;
     private List<PageTableEntry> memSpace;
+    static List<Semaphore> sems = new ArrayList<>();
+    Semaphore semNeeded = new Semaphore('@');
 
     public Process(States state, String progName, Integer runtime,
                    Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan)
@@ -67,12 +71,48 @@ public class Process implements Comparable<Process>
         this.operations = operations;
         this.priority = priority;
         System.out.println("[PROCESS] Created process: " + progName);
+
+        sems.add(new Semaphore('i'));
+        sems.add(new Semaphore('j'));
+        sems.add(new Semaphore('x'));
+        sems.add(new Semaphore('y'));
+        sems.add(new Semaphore('w'));
+        sems.add(new Semaphore('z'));
     }
 
     public void runProcess()
     {
         if(state == States.RUN)
         {
+            /**
+             * critical section resolving
+             */
+            if(getCurrentOp().critical())
+            {
+                for(Semaphore s : sems)
+                {
+                    if(getCurrentOp().getCritVar() == s.getAssociatedVar()) {
+                        semNeeded = s;
+                        break;
+                    }
+                }
+                if(getCurrentOp().getCyclesRemaining()==0)
+                {
+                    semNeeded.signalSem(this);
+                    //System.out.println("\n SIGNAL \n" + this);
+                    semAdded = true;
+                }
+                else if(semAdded)
+                {
+                    semNeeded.waitSem(this);
+                    //System.out.println("\n WAIT \n" + this);
+                    semAdded = false;
+                }
+            }
+
+            /**
+             * normal operations
+             */
             if(programCounter == (operations.size()))
             {
                 setState(States.EXIT);
@@ -88,9 +128,14 @@ public class Process implements Comparable<Process>
             }
             else
             {
-                operations.get(programCounter).Run();
+                if(!getCurrentOp().critical())
+                    operations.get(programCounter).Run();
+                else if(semNeeded.getCurrentProcess() == this)
+                    operations.get(programCounter).Run();
             }
         }
+
+
     }
 
     public Operation getCurrentOp()
