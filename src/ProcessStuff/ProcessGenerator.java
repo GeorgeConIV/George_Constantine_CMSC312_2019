@@ -14,6 +14,7 @@ public class ProcessGenerator
     Double genChild;
     int varSel;
     int priority;
+    int totalCount = 1;
     int opLegth;
     PageTable memoryMan;
 
@@ -88,9 +89,11 @@ public class ProcessGenerator
         String name;
         int memory = (int) (Math.random() * 160000000);
         if(isChild)
-            name = "P" + amount + "'s child";
-        else
-            name = "P" + amount;
+            name = "P" + totalCount + "'s child";
+        else {
+            name = "P" + totalCount;
+            totalCount++;
+        }
         return new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan);
     }
 }

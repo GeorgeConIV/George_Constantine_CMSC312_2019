@@ -1,5 +1,5 @@
 /**
- * George Constantine, iteration 1
+ * George Constantine, iteration 2
  *
  * Usage: just run it the main, its pretty self explanitory
  */
@@ -34,7 +34,7 @@ public class Main
         }
 
 
-        Simulator sim = new Simulator(processes);
+        Simulator sim = new Simulator(processes, pGen);
         Thread t2 = new Thread(sim);
         t2.start();
 

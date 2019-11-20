@@ -30,14 +30,9 @@ public class ProcessManager
     public ProcessManager() {}
 
     //TODO: add the gosh darn threading stuff
-    //TODO: fix the issue with the IO queue fucking up the parent/child thing
-    //You might wanna try to rewrite how parent and child processes interact,
-    //Instead of having the child need to finish before the parent, just
-    //have the parent kill the child on exit and treat the child as any other
     public void initProcMan(List<Process> waitingQueue)
     {
         this.waitingQueue = waitingQueue;
-        totalProcCount = waitingQueue.size();
 
         for(Process p : waitingQueue)
             if(!p.hasParent())
@@ -46,11 +41,15 @@ public class ProcessManager
         for(Process proc : waitingQueue)
             proc.setState(Process.States.WAIT);
 
+        for(Process p : waitingQueue)
+            if(p.getMemSpace().isEmpty())
+                waitingQueue.remove(p);
+
         this.running.add(waitingQueue.get(0));
         this.running.get(0).setState(Process.States.RUN);
         this.active = this.running.get(0);
         this.waitingQueue.remove(0);
-
+        totalProcCount = waitingQueue.size();
 
     }
 
@@ -224,6 +223,18 @@ public class ProcessManager
             readyQueue.remove(daddy.getChild());
 
         daddy.killChild();
+    }
+
+    //TODO: add the proper initialization stuff such that the new procs actually run
+    public void addProcesses(List<Process> newProcs)
+    {
+        for(Process proc : newProcs)
+            addToWaitingQueue(proc);
+    }
+
+    public int getRemaining()
+    {
+        return IOQueue.size() + waitingQueue.size();
     }
 
     private void addToReadyQueue(Process proc)
