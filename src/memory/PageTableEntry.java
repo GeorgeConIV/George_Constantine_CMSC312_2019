@@ -9,7 +9,7 @@ public class PageTableEntry
     public PageTableEntry(boolean validInvalidBit, Frame frame, Page page)
     {
         this.validInvalidBit = validInvalidBit;
-        this. frame = frame;
+        this.frame = frame;
         this.page = page;
     }
 
@@ -36,6 +36,12 @@ public class PageTableEntry
     public boolean getBit()
     {
         return validInvalidBit;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Page id: " + page.toString() + " " + frame.toString();
     }
 
 }

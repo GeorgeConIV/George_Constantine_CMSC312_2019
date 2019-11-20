@@ -15,7 +15,7 @@ public class PageTable implements Runnable
     private List<PageTableEntry> pageTable = new ArrayList<>();
     private List<Page> pages = new ArrayList<>();
     private List<Frame> frames = new ArrayList<>();
-    private List<Frame> freeFrames = new ArrayList<>();
+    private List<Frame> freeFrames;
 
     public PageTable()
     {
@@ -86,6 +86,17 @@ public class PageTable implements Runnable
             pageTable.get(p.getPage().getPageID()).getFrame().deallocate();
             currentPage--;
         }
+    }
+
+    public List<PageTableEntry> getNotFreePages()
+    {
+        List<PageTableEntry> things = new ArrayList<>();
+
+        for(PageTableEntry p : pageTable)
+            if(p.getBit())
+                things.add(p);
+
+        return things;
     }
 
     private void deMem(List<PageTableEntry> dePage)

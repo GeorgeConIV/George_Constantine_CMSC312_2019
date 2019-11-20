@@ -51,8 +51,10 @@ public class Process implements Comparable<Process>
     private Process parent;
     private boolean hasParent = false;
     private boolean semAdded = true;
+    private Pipe pipe= new Pipe();
+    private String data;
 
-    static PageTable memoryMan = new PageTable();
+    public static PageTable memoryMan = new PageTable();
 
     List<Operation> operations;
     private List<PageTableEntry> memSpace;
@@ -111,6 +113,17 @@ public class Process implements Comparable<Process>
             }
 
             /**
+             * Sending data to child at an arbitrary point in execution
+             */
+            if(programCounter == 1 && getCurrentOp().getCyclesRemaining() == 0)
+            {
+                if(hasChild)
+                {
+                    pipe.send(progName + " run: " + runtime.toString());
+                }
+            }
+
+            /**
              * normal operations
              */
             if(programCounter == (operations.size()))
@@ -128,6 +141,11 @@ public class Process implements Comparable<Process>
             }
             else
             {
+                if(hasParent && pipe.isReciever(this) && pipe.isData())
+                {
+                    data = pipe.recieve();
+                }
+
                 if(!getCurrentOp().critical())
                     operations.get(programCounter).Run();
                 else if(semNeeded.getCurrentProcess() == this)
@@ -209,6 +227,13 @@ public class Process implements Comparable<Process>
         child = proc;
         child.setParent(this);
         hasChild = true;
+        pipe = new Pipe(this, child);
+        child.setPipe(pipe);
+    }
+
+    public void setPipe(Pipe pip)
+    {
+        pipe = pip;
     }
 
     public Process getChild()

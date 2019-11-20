@@ -12,4 +12,10 @@ public class Page
     {
         return pageID;
     }
+
+    @Override
+    public String toString()
+    {
+        return pageID.toString();
+    }
 }

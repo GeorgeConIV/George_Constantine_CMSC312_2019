@@ -175,13 +175,12 @@ public class ProcessManager
     {
         boolean parentsDone = true;
         for(Process p : parents)
-            if(p.getState() != Process.States.EXIT)
+            if(p.getState() != Process.States.EXIT) {
                 parentsDone = false;
+                break;
+            }
 
-        if(parentsDone)
-            return true;
-        else
-            return false;
+        return parentsDone;
     }
 
     private Process getNewActive()
@@ -229,7 +228,14 @@ public class ProcessManager
     public void addProcesses(List<Process> newProcs)
     {
         for(Process proc : newProcs)
+        {
+            if(!proc.hasParent())
+                parents.add(proc);
+            if(proc.getMemSpace().isEmpty())
+                waitingQueue.remove(proc);
             addToWaitingQueue(proc);
+
+        }
     }
 
     public int getRemaining()
@@ -315,5 +321,10 @@ public class ProcessManager
     public Process getActive()
     {
         return active;
+    }
+
+    public List<Process> getDone()
+    {
+        return done;
     }
 }

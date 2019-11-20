@@ -60,7 +60,7 @@ public class ProcessGenerator
         List<Operation> opList = new ArrayList<>();
 
         List<Character> possibleVars = new ArrayList<>();  //possible values for the critical section var
-        possibleVars.add('i');
+        possibleVars.add('i');//talk about multiple vars in final report
         possibleVars.add('j');
         possibleVars.add('x');
         possibleVars.add('y');
@@ -89,7 +89,7 @@ public class ProcessGenerator
         String name;
         int memory = (int) (Math.random() * 160000000);
         if(isChild)
-            name = "P" + totalCount + "'s child";
+            name = "P" + (totalCount-1) + "'s child";
         else {
             name = "P" + totalCount;
             totalCount++;

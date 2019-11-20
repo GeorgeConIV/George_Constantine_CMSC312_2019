@@ -3,7 +3,7 @@ package memory;
 public class Frame
 {
     private Integer frameID;
-    private boolean free;
+    private Boolean free;
     public Frame(Integer frameID)
     {
         this.frameID = frameID;
@@ -44,5 +44,11 @@ public class Frame
     public boolean getFree()
     {
         return free;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "frame id: " + frameID.toString() + " free status: " + free.toString();
     }
 }
