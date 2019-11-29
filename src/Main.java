@@ -33,6 +33,7 @@ public class Main
         }
 
         //TODO: test threading and semaphor compatibility
+        //TODO: Fix threading, it will hang and weird sem stuff will happen. idk man im on break
         //TODO: possibily change the threadable thing from sim to procman
         //a note on the above: probably not, since procman is just what manages
         //the scheduler, and the sim is the whole thing.
