@@ -53,6 +53,7 @@ public class Process implements Comparable<Process>
     private boolean semAdded = true;
     private Pipe pipe= new Pipe();
     private String data;
+    private int cycleCount = 0;
 
     public static PageTable memoryMan = new PageTable();
 
@@ -60,6 +61,12 @@ public class Process implements Comparable<Process>
     private List<PageTableEntry> memSpace;
     static List<Semaphore> sems = new ArrayList<>();
     Semaphore semNeeded = new Semaphore('@');
+    static Semaphore semI = new Semaphore('i');
+    static Semaphore semJ = new Semaphore('j');
+    static Semaphore semX = new Semaphore('x');
+    static Semaphore semY = new Semaphore('y');
+    static Semaphore semW = new Semaphore('w');
+    static Semaphore semZ = new Semaphore('z');
 
     public Process(States state, String progName, Integer runtime,
                    Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan)
@@ -74,18 +81,19 @@ public class Process implements Comparable<Process>
         this.priority = priority;
         System.out.println("[PROCESS] Created process: " + progName);
 
-        sems.add(new Semaphore('i'));
-        sems.add(new Semaphore('j'));
-        sems.add(new Semaphore('x'));
-        sems.add(new Semaphore('y'));
-        sems.add(new Semaphore('w'));
-        sems.add(new Semaphore('z'));
+        sems.add(semI);
+        sems.add(semJ);
+        sems.add(semX);
+        sems.add(semY);
+        sems.add(semW);
+        sems.add(semZ);
     }
 
     public void runProcess()
     {
         if(state == States.RUN)
         {
+            cycleCount++;
             /**
              * critical section resolving
              */
@@ -166,6 +174,11 @@ public class Process implements Comparable<Process>
         {
             return null;
         }
+    }
+
+    public int getCycleCount()
+    {
+        return cycleCount;
     }
 
     public Integer getProgramCounter()
@@ -267,7 +280,14 @@ public class Process implements Comparable<Process>
     @Override
     public int compareTo(Process proc)
     {
-        return priority.compareTo(proc.getPriority());
+        if(this.cycleCount > (proc.getCycleCount() + 1000))
+        {
+            return 1;
+        }
+        else
+        {
+            return priority.compareTo(proc.getPriority());
+        }
     }
 
     @Override

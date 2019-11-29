@@ -3,7 +3,7 @@ package memory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PageTable implements Runnable
+public class PageTable
 {
     private double pageSize = 8000000; //byte size of a page
     private double memTotal = 4000000000.0;
@@ -79,9 +79,10 @@ public class PageTable implements Runnable
 
     public void deallocateMem(List<PageTableEntry> dePage)
     {
+        System.out.println("[PAGE TABLE] Deallocated "  + dePage.size() + " pages");
         for(PageTableEntry p : dePage)
         {
-            System.out.println("[PAGE TABLE] Deallocated page: " + p.getPage().getPageID());
+
             pageTable.get(p.getPage().getPageID()).setBit(false);
             pageTable.get(p.getPage().getPageID()).getFrame().deallocate();
             currentPage--;
@@ -104,10 +105,4 @@ public class PageTable implements Runnable
 
     }
 
-    //TODO: make this actually work
-    @Override
-    public void run()
-    {
-
-    }
 }

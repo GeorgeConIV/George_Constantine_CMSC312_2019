@@ -4,6 +4,7 @@ import ProcessStuff.ProcessManager;
 import commands.IOEvent;
 import memory.PageTableEntry;
 
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class Simulator implements Runnable
@@ -17,12 +18,17 @@ public class Simulator implements Runnable
     ProcessManager procMan = new ProcessManager();
     boolean test = true;
     ProcessGenerator pGen;
+    static int count = 0;
+    String name;
 
     public Simulator(List<Process> startList, ProcessGenerator pGen)
     {
         this.startList = startList;
         procMan.initProcMan(startList);
         this.pGen = pGen;
+        name = "Sim #" + count;
+        count++;
+        System.out.println("[SIMULATOR] Creating sim: " + name);
     }
 
     public void simulate()
@@ -35,8 +41,15 @@ public class Simulator implements Runnable
     {
         while(!procMan.checkComplete())
         {
-            procMan.runForTime(new IOEvent());
-            if(procMan.getRemaining() == 1 && test)
+            try
+            {
+                procMan.runForTime(new IOEvent());
+            }
+            catch(ConcurrentModificationException e)
+            {
+                System.out.println("ERROR: \n" + e.getMessage());
+            }
+            /*if(procMan.getRemaining() == 1 && test)
             {
                 addList = pGen.generateRandomProcess(5);
                 procMan.addProcesses(addList);
@@ -46,21 +59,21 @@ public class Simulator implements Runnable
                 for(Process proc : addList)
                     System.out.println(proc.toString() + "\n");
 
-            }
+            }*/
         }
 
-        System.out.println("[SIMULATOR] Completed batch of generated processes");
+        System.out.println("[SIMULATOR]" + name + " Completed batch of generated processes");
         doneList = procMan.getDone();
-        System.out.println("[SIMULATOR] List of done procs:");
+        System.out.println("[SIMULATOR]" + name + " List of done procs:");
         for(Process proc : doneList)
             System.out.println(proc.getProgName());
 
-        debugPageList = Process.memoryMan.getNotFreePages();
-        if(!debugPageList.isEmpty())
+        //debugPageList = Process.memoryMan.getNotFreePages();
+        /*if(!debugPageList.isEmpty())
         {
-            System.out.println("\n[SIMULATOR] List of pages not deallocated");
+            System.out.println("\n[SIMULATOR]" + name + " List of pages still in use");
             for (PageTableEntry pte : debugPageList)
                 System.out.println(pte.toString());
-        }
+        }*/
     }
 }
