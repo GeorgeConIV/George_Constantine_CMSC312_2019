@@ -53,7 +53,7 @@ public class ProcessManager
 
     }
 
-    public void handleIOInterrupt(IOEvent io)
+    synchronized public void handleIOInterrupt(IOEvent io)
     {
         if(!running.isEmpty())
         {
@@ -114,7 +114,7 @@ public class ProcessManager
             removeFromWaitingQueue(active);
     }
 
-    public void runForTime(IOEvent io)
+    synchronized public void runForTime(IOEvent io)
     {
         boolean testy = true;
         if(io.getTriggered() && !IOQueue.isEmpty())
@@ -322,6 +322,8 @@ public class ProcessManager
     {
         return active;
     }
+
+
 
     public List<Process> getDone()
     {

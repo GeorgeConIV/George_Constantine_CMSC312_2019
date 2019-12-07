@@ -19,7 +19,7 @@ public class Semaphore
     }
 
 
-    public void waitSem(Process caller)
+    synchronized public void waitSem(Process caller)
     {
         if(availible && waitingQueue.isEmpty())
         {
@@ -34,7 +34,7 @@ public class Semaphore
         }
     }
 
-    public void signalSem(Process caller) {
+    synchronized public void signalSem(Process caller) {
         if (!waitingQueue.isEmpty()){
             System.out.println("[SEMAPHOR] Process: " + active.getProgName() + " releasing control of semaphor " + associatedVar);
             active = waitingQueue.get(0);
@@ -49,9 +49,15 @@ public class Semaphore
         availible = true;
     }
 
-    public Process getCurrentProcess()
+    synchronized public Process getCurrentProcess()
     {
-        return active;
+        Process temp = active;
+        if(active.isOrphan())
+            signalSem(active);
+        if(active.getState().equals(Process.States.EXIT))
+            signalSem(active);
+
+        return temp;
     }
 
     public boolean isAvailible() {

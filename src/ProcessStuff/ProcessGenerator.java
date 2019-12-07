@@ -14,13 +14,17 @@ public class ProcessGenerator
     Double genChild;
     int varSel;
     int priority;
-    int totalCount = 1;
+    static int totalCount = 1;
     int opLegth;
     PageTable memoryMan;
+    SemManager sems;
+    ProcessManager procMan;
 
 
-    public ProcessGenerator(PageTable memoryMan)
+    public ProcessGenerator(PageTable memoryMan, SemManager sems, ProcessManager procMan)
     {
+        this.sems = sems;
+        this.procMan = procMan;
         this.memoryMan = memoryMan;
     }
 
@@ -94,6 +98,6 @@ public class ProcessGenerator
             name = "P" + totalCount;
             totalCount++;
         }
-        return new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan);
+        return new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems);
     }
 }

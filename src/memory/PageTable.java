@@ -6,7 +6,7 @@ import java.util.List;
 public class PageTable
 {
     private double pageSize = 8000000; //byte size of a page
-    private double memTotal = 4000000000.0;
+    private double memTotal = 40000000000.0;
     private double pageCount = memTotal/pageSize;
     private Integer currentPage = 0;
 
@@ -16,6 +16,7 @@ public class PageTable
     private List<Page> pages = new ArrayList<>();
     private List<Frame> frames = new ArrayList<>();
     private List<Frame> freeFrames;
+    int memRemaining;
 
     public PageTable()
     {
@@ -47,7 +48,7 @@ public class PageTable
         int procPageCount = (int)pagesNeeded;
         List<PageTableEntry> allocatedPages = new ArrayList<>();
 
-        int memRemaining = ((int)pageCount) - currentPage;
+        memRemaining = ((int)pageCount) - currentPage;
 
         if(procPageCount > memRemaining)
         {
@@ -74,7 +75,10 @@ public class PageTable
         return allocatedPages;
     }
 
-
+    public boolean enoughFree(int requesting)
+    {
+        return requesting > memRemaining;
+    }
 
 
     public void deallocateMem(List<PageTableEntry> dePage)

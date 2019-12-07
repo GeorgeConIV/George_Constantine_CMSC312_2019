@@ -1,4 +1,6 @@
 import ProcessStuff.Process;
+import ProcessStuff.ProcessManager;
+import ProcessStuff.SemManager;
 import commands.*;
 import memory.PageTable;
 
@@ -30,12 +32,17 @@ public class Parser
     Pattern patRuntime = Pattern.compile(runtimeRegex);
     Pattern patMem = Pattern.compile(memRegex);
 
+    ProcessManager pMan;
+    SemManager sMan;
 
 
-    public Parser(List<String> preParesed, PageTable mem)
+
+    public Parser(List<String> preParesed, PageTable mem, ProcessManager pMan, SemManager sMan)
     {
         this.mem = mem;
         this.preParsed = preParesed;
+        this.pMan = pMan;
+        this.sMan = sMan;
         for(String s: preParesed)
         {
             preParseString = preParseString.concat(s + "\n");
@@ -73,7 +80,7 @@ public class Parser
 
         listOfOps = getListOfCommands();
 
-        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0, mem);
+        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0, mem, pMan, sMan);
         return prog;
     }
 

@@ -54,22 +54,18 @@ public class Process implements Comparable<Process>
     private Pipe pipe= new Pipe();
     private String data;
     private int cycleCount = 0;
+    private boolean isOrphan=false;
 
-    public static PageTable memoryMan = new PageTable();
+    public static PageTable memoryMan;
+    ProcessManager procMan;
 
     List<Operation> operations;
     private List<PageTableEntry> memSpace;
-    static List<Semaphore> sems = new ArrayList<>();
     Semaphore semNeeded = new Semaphore('@');
-    static Semaphore semI = new Semaphore('i');
-    static Semaphore semJ = new Semaphore('j');
-    static Semaphore semX = new Semaphore('x');
-    static Semaphore semY = new Semaphore('y');
-    static Semaphore semW = new Semaphore('w');
-    static Semaphore semZ = new Semaphore('z');
+    SemManager sems;
 
     public Process(States state, String progName, Integer runtime,
-                   Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan)
+                   Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan, ProcessManager procMan, SemManager sems)
     {
         this.state = state;
         this.progName = progName;
@@ -79,17 +75,14 @@ public class Process implements Comparable<Process>
         memSpace = this.memoryMan.allocateMem(memory);
         this.operations = operations;
         this.priority = priority;
+        this.procMan = procMan;
+        this.sems = sems;
         System.out.println("[PROCESS] Created process: " + progName);
 
-        sems.add(semI);
-        sems.add(semJ);
-        sems.add(semX);
-        sems.add(semY);
-        sems.add(semW);
-        sems.add(semZ);
+
     }
 
-    public void runProcess()
+    synchronized public void runProcess()
     {
         if(state == States.RUN)
         {
@@ -99,20 +92,14 @@ public class Process implements Comparable<Process>
              */
             if(getCurrentOp().critical())
             {
-                for(Semaphore s : sems)
-                {
-                    if(getCurrentOp().getCritVar() == s.getAssociatedVar()) {
-                        semNeeded = s;
-                        break;
-                    }
-                }
-                if(getCurrentOp().getCyclesRemaining()==0)
+                semNeeded = sems.getNeeded(getCurrentOp().getCritVar());
+                if(getCurrentOp().getCyclesRemaining()==0) //!sems.checkWaiting(getCurrentOp().getCritVar(), this)
                 {
                     semNeeded.signalSem(this);
                     //System.out.println("\n SIGNAL \n" + this);
                     semAdded = true;
                 }
-                else if(semAdded)
+                else if(semAdded || sems.check(semNeeded.associatedVar))
                 {
                     semNeeded.waitSem(this);
                     //System.out.println("\n WAIT \n" + this);
@@ -222,7 +209,13 @@ public class Process implements Comparable<Process>
     public void killChild()
     {
         hasChild = false;
+        child.isOrphan = true;
         memoryMan.deallocateMem(child.getMemSpace());
+    }
+
+    public boolean isOrphan()
+    {
+        return isOrphan;
     }
 
     public List<PageTableEntry> getMemSpace()

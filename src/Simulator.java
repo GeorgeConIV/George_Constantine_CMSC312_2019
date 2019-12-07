@@ -15,15 +15,16 @@ public class Simulator implements Runnable
 
     List<PageTableEntry> debugPageList;
 
-    ProcessManager procMan = new ProcessManager();
+    ProcessManager procMan;
     boolean test = true;
     ProcessGenerator pGen;
     static int count = 0;
     String name;
 
-    public Simulator(List<Process> startList, ProcessGenerator pGen)
+    public Simulator(List<Process> startList, ProcessGenerator pGen, ProcessManager procMan)
     {
         this.startList = startList;
+        this.procMan = procMan;
         procMan.initProcMan(startList);
         this.pGen = pGen;
         name = "Sim #" + count;
@@ -39,16 +40,19 @@ public class Simulator implements Runnable
     @Override
     public void run()
     {
-        while(!procMan.checkComplete())
+        int i = 100;
+        while(i >0)
         {
-            try
+            while (!procMan.checkComplete())
             {
-                procMan.runForTime(new IOEvent());
-            }
-            catch(ConcurrentModificationException e)
-            {
-                System.out.println("ERROR: \n" + e.getMessage());
-            }
+                try
+                {
+                    procMan.runForTime(new IOEvent());
+                }
+                catch (ConcurrentModificationException e)
+                {
+                    System.out.println("ERROR: \n" + e.getMessage());
+                }
             /*if(procMan.getRemaining() == 1 && test)
             {
                 addList = pGen.generateRandomProcess(5);
@@ -60,6 +64,9 @@ public class Simulator implements Runnable
                     System.out.println(proc.toString() + "\n");
 
             }*/
+            }
+            procMan.addProcesses(pGen.generateRandomProcess(5));
+            i--;
         }
 
         System.out.println("[SIMULATOR]" + name + " Completed batch of generated processes");
