@@ -6,6 +6,7 @@ import commands.Yield;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class ProcessManager
@@ -30,7 +31,7 @@ public class ProcessManager
     public ProcessManager() {}
 
     //TODO: add the gosh darn threading stuff
-    public void initProcMan(List<Process> waitingQueue)
+    public void initProcMan(List<Process> waitingQueue) throws ConcurrentModificationException
     {
         this.waitingQueue = waitingQueue;
 
@@ -203,9 +204,11 @@ public class ProcessManager
     {
         Collections.sort(waitingQueue);
         if(waitingQueue.size() > 1) {
-            System.out.println("-----------NEW WAITING QUEUE ORDER--------");
+            if(OSGlobals.debug)
+                System.out.println("-----------NEW WAITING QUEUE ORDER--------");
             for (Process p : waitingQueue) {
-                System.out.println(p.getProgName());
+                if(OSGlobals.debug)
+                    System.out.println(p.getProgName());
             }
         }
     }
@@ -298,7 +301,8 @@ public class ProcessManager
             OSGlobals.procsCompleted++;
             proc.setState(Process.States.EXIT);
             done.add(proc);
-            System.out.println("[Scheduler]----------------------Process: " + proc.getProgName() + " is done!---------------");
+            if(OSGlobals.debug)
+                System.out.println("[Scheduler]----------------------Process: " + proc.getProgName() + " is done!---------------");
         }
     }
 

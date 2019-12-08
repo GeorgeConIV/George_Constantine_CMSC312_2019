@@ -10,11 +10,16 @@ public class GUI{
     private JLabel procsCompleted;
     private JLabel completed;
     private JLabel cyclesper;
-    private JCheckBox dis1;
-    private JCheckBox dis2;
-    private JCheckBox dis3;
-    private JCheckBox dis4;
-    private JList list1;
+    public JCheckBox dis1;
+    public JCheckBox dis2;
+    public JCheckBox dis3;
+    public JCheckBox dis4;
+    public JCheckBox generateProcs;
+    public JCheckBox onOff;
+    public JTextField numProcs;
+    public JButton start;
+    private JLabel warn;
+    private JLabel warn2;
 
     JFrame frame;
     public GUI()
@@ -44,4 +49,6 @@ public class GUI{
         return panel1;
     }
 
+    private void createUIComponents() {
+    }
 }

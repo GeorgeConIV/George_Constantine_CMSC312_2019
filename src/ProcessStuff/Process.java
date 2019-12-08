@@ -77,7 +77,8 @@ public class Process implements Comparable<Process>
         this.priority = priority;
         this.procMan = procMan;
         this.sems = sems;
-        System.out.println("[PROCESS] Created process: " + progName);
+        if(OSGlobals.debug)
+            System.out.println("[PROCESS] Created process: " + progName);
 
 
     }

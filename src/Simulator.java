@@ -1,3 +1,4 @@
+import ProcessStuff.OSGlobals;
 import ProcessStuff.Process;
 import ProcessStuff.ProcessGenerator;
 import ProcessStuff.ProcessManager;
@@ -22,6 +23,7 @@ public class Simulator implements Runnable
     boolean test = true;
     ProcessGenerator pGen;
     static int count = 0;
+    int local;
     String name;
 
     public Simulator(List<Process> startList, ProcessGenerator pGen, ProcessManager procMan)
@@ -31,8 +33,10 @@ public class Simulator implements Runnable
         procMan.initProcMan(startList);
         this.pGen = pGen;
         name = "Sim #" + count;
+        local = count;
         count++;
-        System.out.println("[SIMULATOR] Creating sim: " + name);
+        if(OSGlobals.debug)
+            System.out.println("[SIMULATOR] Creating sim: " + name);
     }
 
     public void simulate()
@@ -41,49 +45,51 @@ public class Simulator implements Runnable
     }
 
     @Override
-    public void run()
+    public void run() {
+        iterate();
+    }
+
+    public void iterate()
     {
-        int i = 100;
-        while(i>0)
+        while (OSGlobals.enable)
         {
-            /*if(!threadEn[count-1])
+            if (check())
             {
-                try {
-                    Thread.sleep(1000);
-                } catch(InterruptedException e){}
-            }*/
-            while (!procMan.checkComplete())
-            {
-                /*if(!threadEn[count-1])
+                while (!procMan.checkComplete())
                 {
                     try {
-                        Thread.sleep(1000);
-                    } catch(InterruptedException e){}
-                }*/
-                try
-                {
-                    procMan.runForTime(new IOEvent());
+                        procMan.runForTime(new IOEvent());
+                    } catch (ConcurrentModificationException e) {
+                        if (OSGlobals.debug)
+                            System.out.println("ERROR: \n" + e.getMessage());
+
+                    }
                 }
-                catch (ConcurrentModificationException e)
+                if (genMore)
                 {
-                    System.out.println("ERROR: \n" + e.getMessage());
+                    procMan.addProcesses(pGen.generateRandomProcess(OSGlobals.startProcs));
                 }
 
             }
-            //if(genMore)
-            //{
-                procMan.addProcesses(pGen.generateRandomProcess(5));
-                genMore = false;
-            //}
-            i--;
-
+            else
+            {
+                try {
+                    Thread.sleep(10);
+                } catch(InterruptedException e) {}
+            }
 
         }
 
-        System.out.println("[SIMULATOR]" + name + " Completed batch of generated processes");
-        doneList = procMan.getDone();
-        System.out.println("[SIMULATOR]" + name + " List of done procs:");
-        for(Process proc : doneList)
-            System.out.println(proc.getProgName());
+        if(OSGlobals.debug) {
+            System.out.println("[SIMULATOR]" + name + " Completed batch of generated processes");
+            doneList = procMan.getDone();
+            System.out.println("[SIMULATOR]" + name + " List of done procs:");
+            for (Process proc : doneList)
+                System.out.println(proc.getProgName());
+        }
+    }
+    private synchronized boolean check()
+    {
+        return threadEn[local];
     }
 }

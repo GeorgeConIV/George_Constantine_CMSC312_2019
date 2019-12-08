@@ -18,12 +18,19 @@ public class Main
     static PageTable pt = new PageTable();
     public static void main(String[] args)
     {
-        /*GWrapper g = new GWrapper();
+        GWrapper g = new GWrapper();
         Thread t1 = new Thread(g);
-        t1.start();*/
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter number of processes to be generated: ");
-        Integer num = Integer.parseInt(scanner.next());
+        t1.start();
+        //Scanner scanner = new Scanner(System.in);
+        //System.out.println("Enter number of processes to be generated: ");
+        while(!OSGlobals.start)
+        {
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException e) {}
+        }
+        Integer num = 5;
+        OSGlobals.startProcs = 5;
         SemManager semaphors = new SemManager();
 
 
@@ -59,17 +66,14 @@ public class Main
         Simulator sim3 = new Simulator(procs3, pGen3, procMan3);
         Simulator sim4 = new Simulator(procs4, pGen4, procMan4);
 
-        for(Process command: processes)
-        {
-            System.out.println(command.toString()+ "\n");
+        if(OSGlobals.debug) {
+            for (Process command : processes) {
+                System.out.println(command.toString() + "\n");
+            }
+
+            for (Process pr : procs)
+                System.out.println(pr.toString());
         }
-
-        for(Process pr : procs)
-            System.out.println(pr.toString());
-
-        //TODO: test threading and semaphor compatibility
-        //TODO: Fix threading, it will hang and weird sem stuff will happen. idk man im on break
-        //TODO: possibily change the threadable thing from sim to procman
         //a note on the above: probably not, since procman is just what manages
         //the scheduler, and the sim is the whole thing.
 
@@ -84,6 +88,5 @@ public class Main
 
         Thread t5 = new Thread(sim4);
         t5.start();
-
     }
 }

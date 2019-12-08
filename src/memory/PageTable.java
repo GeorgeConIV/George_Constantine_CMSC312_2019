@@ -1,5 +1,7 @@
 package memory;
 
+import ProcessStuff.OSGlobals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,8 @@ public class PageTable
 
         if(procPageCount > memRemaining)
         {
-            System.out.println("[PAGE TABLE] Not enough free memory to allocate");
+            if(OSGlobals.debug)
+                System.out.println("[PAGE TABLE] Not enough free memory to allocate");
             return allocatedPages;
         }
 
@@ -71,7 +74,8 @@ public class PageTable
             }
             pagesNeeded--;
         }
-        System.out.println("[PAGE TABLE] Allocated: " + procPageCount + " pages of memory");
+        if(OSGlobals.debug)
+            System.out.println("[PAGE TABLE] Allocated: " + procPageCount + " pages of memory");
         return allocatedPages;
     }
 
@@ -83,7 +87,8 @@ public class PageTable
 
     public void deallocateMem(List<PageTableEntry> dePage)
     {
-        System.out.println("[PAGE TABLE] Deallocated "  + dePage.size() + " pages");
+        if(OSGlobals.debug)
+            System.out.println("[PAGE TABLE] Deallocated "  + dePage.size() + " pages");
         for(PageTableEntry p : dePage)
         {
 

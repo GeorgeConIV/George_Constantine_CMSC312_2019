@@ -23,13 +23,15 @@ public class Pipe
     {
         dat = data;
         flag = true;
-        System.out.println("[PIPE] Sending data to child: \"" + data + "\"");
+        if(OSGlobals.debug)
+            System.out.println("[PIPE] Sending data to child: \"" + data + "\"");
     }
 
     public String recieve()
     {
         flag = false;
-        System.out.println("[PIPE] Recieving data from parent: \"" + dat + "\"");
+        if(OSGlobals.debug)
+            System.out.println("[PIPE] Recieving data from parent: \"" + dat + "\"");
         return dat;
     }
 

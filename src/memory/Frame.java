@@ -1,5 +1,7 @@
 package memory;
 
+import ProcessStuff.OSGlobals;
+
 public class Frame
 {
     private Integer frameID;
@@ -24,7 +26,8 @@ public class Frame
         }
         else
         {
-            System.out.println("[MEMORY] Memory error: attempting to allocate memory that is allocated");
+            if(OSGlobals.debug)
+                System.out.println("[MEMORY] Memory error: attempting to allocate memory that is allocated");
             return this;
         }
     }
@@ -37,7 +40,8 @@ public class Frame
         }
         else
         {
-            System.out.println("[MEMORY] Memory error: attempting to deallocate memory that is deallocated");
+            if(OSGlobals.debug)
+                System.out.println("[MEMORY] Memory error: attempting to deallocate memory that is deallocated");
         }
     }
 
