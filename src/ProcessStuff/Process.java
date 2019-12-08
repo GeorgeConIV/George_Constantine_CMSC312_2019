@@ -86,6 +86,7 @@ public class Process implements Comparable<Process>
     {
         if(state == States.RUN)
         {
+            OSGlobals.cycleCount++;
             cycleCount++;
             /**
              * critical section resolving

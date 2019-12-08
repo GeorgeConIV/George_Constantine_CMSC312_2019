@@ -4,11 +4,12 @@
  * Usage: just run it the main, its pretty self explanitory
  */
 
+import GUI.GWrapper;
 import ProcessStuff.*;
 import ProcessStuff.Process;
 import memory.PageTable;
 
-import java.util.ArrayList;
+import javax.swing.*;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,10 +18,15 @@ public class Main
     static PageTable pt = new PageTable();
     public static void main(String[] args)
     {
+        /*GWrapper g = new GWrapper();
+        Thread t1 = new Thread(g);
+        t1.start();*/
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter number of processes to be generated: ");
         Integer num = Integer.parseInt(scanner.next());
         SemManager semaphors = new SemManager();
+
+
 
         //Thread t1 = new Thread(pt);
         //t1.start();

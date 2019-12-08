@@ -295,6 +295,7 @@ public class ProcessManager
     {
         if(!done.contains(proc))
         {
+            OSGlobals.procsCompleted++;
             proc.setState(Process.States.EXIT);
             done.add(proc);
             System.out.println("[Scheduler]----------------------Process: " + proc.getProgName() + " is done!---------------");
