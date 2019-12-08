@@ -36,28 +36,26 @@ public class ProcessGenerator
         {
 
             genChild = Math.random();
-
             //Will randomly generate a process with a child process
-            if(genChild > 0.6) {
-                proc = generateProcess(amount, false);
-                Process child = generateProcess(amount, true);
-                proc.createChild(child);
-                child.setParent(proc);
-                procs.add(proc);
-                procs.add(child);
-            }
-            else
+            proc = generateProcess(genChild);
+            //Process child = generateProcess(amount, true);
+            //proc.createChild(child);
+            //child.setParent(proc);
+            do
             {
-                proc = generateProcess(amount, false);
                 procs.add(proc);
-            }
+                if(proc.hasChild())
+                    proc = proc.getChild();
+            }while(proc.hasChild());
+            //procs.add(child);
+
             amount--;
 
         }
         return procs;
     }
 
-    private Process generateProcess(int amount, boolean isChild)
+    private Process generateProcess(double hasChild)
     {
         opCount = Math.random();
         opCount = (opCount * 5) + 3;
@@ -92,12 +90,32 @@ public class ProcessGenerator
         opList.add(new IOOp(10));
         String name;
         int memory = (int) (Math.random() * 160000000);
-        if(isChild)
-            name = "P" + (totalCount-1) + "'s child";
-        else {
+        Process proc;
+        if(hasChild > 0.5)
+        {
             name = "P" + totalCount;
             totalCount++;
+            proc = new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems);
+            genChild = Math.random();
+            Process child = generateProcess(genChild);
+            child.setParent(proc);
+            proc.createChild(child);
+            //child.setProgName(proc.getProgName() + "'s child");
         }
-        return new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems);
+        else
+        {
+            name = "P" + totalCount;
+            totalCount++;
+            proc = new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems);
+
+        }
+
+        if(proc.hasParent())
+        {
+            //proc.setProgName(proc.getParent().getProgName() + "'s child");
+        }
+
+
+        return proc;
     }
 }

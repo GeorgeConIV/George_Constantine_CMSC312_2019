@@ -83,6 +83,24 @@ public class Process implements Comparable<Process>
 
     }
 
+    public Process(States state, Integer runtime,
+                   Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan, ProcessManager procMan, SemManager sems)
+    {
+        this.state = state;
+        this.runtime = runtime;
+        this.memory = memory;
+        this.memoryMan = memoryMan;
+        memSpace = this.memoryMan.allocateMem(memory);
+        this.operations = operations;
+        this.priority = priority;
+        this.procMan = procMan;
+        this.sems = sems;
+        if(OSGlobals.debug)
+            System.out.println("[PROCESS] Created process: ");
+
+
+    }
+
     synchronized public void runProcess()
     {
         if(state == States.RUN)
@@ -204,12 +222,32 @@ public class Process implements Comparable<Process>
 
     public void setParent(Process proc)
     {
+
         parent = proc;
         hasParent = true;
+
+    }
+
+    public void check()
+    {
+        if(hasParent)
+        {
+            Process temp = getParent();
+            String childCount = "c";
+            while (temp.hasParent)
+            {
+                childCount += "c";
+                if (temp.hasParent)
+                    temp = temp.getParent();
+            }
+            setProgName(progName + childCount);
+        }
     }
 
     public void killChild()
     {
+        if(child.hasChild)
+            child.killChild();
         hasChild = false;
         child.isOrphan = true;
         memoryMan.deallocateMem(child.getMemSpace());
@@ -267,6 +305,11 @@ public class Process implements Comparable<Process>
         }
     }
 
+    public void setProgName(String progName)
+    {
+        this.progName = progName;
+    }
+
     public boolean hasParent()
     {
         return hasParent;
@@ -301,7 +344,7 @@ public class Process implements Comparable<Process>
                 + "\nMemory: " + memory.toString()
                 + "\nOperations: \n" + longString;
         if(hasChild)
-            str = str.concat("\n" + progName +" CHILD:\n" + child.toString());
+            str = str.concat("\n" + progName +"'s CHILD:\n" + child.getProgName());
 
         return str;
     }

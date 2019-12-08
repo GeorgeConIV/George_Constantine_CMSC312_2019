@@ -10,6 +10,7 @@ public class Semaphore
     List<Process> waitingQueue = new ArrayList<>();
     Character associatedVar;
     boolean availible;
+    boolean semDebug = false;
     Process active;
 
     public Semaphore(Character associatedVar)
@@ -23,14 +24,14 @@ public class Semaphore
     {
         if(availible && waitingQueue.isEmpty())
         {
-            if(OSGlobals.debug)
+            if(OSGlobals.debug && semDebug)
                 System.out.println("[SEMAPHOR] Process: " + caller.getProgName() + " taking control of semaphor " + associatedVar);
             active = caller;
             availible = false;
         }
         else
         {
-            if(OSGlobals.debug)
+            if(OSGlobals.debug&& semDebug)
                 System.out.println("[SEMAPHOR] Process: " + caller.getProgName() + " being added to wait queue of semaphor " + associatedVar);
             waitingQueue.add(caller);
         }
@@ -38,17 +39,17 @@ public class Semaphore
 
     synchronized public void signalSem(Process caller) {
         if (!waitingQueue.isEmpty()){
-            if(OSGlobals.debug)
+            if(OSGlobals.debug&& semDebug)
                 System.out.println("[SEMAPHOR] Process: " + active.getProgName() + " releasing control of semaphor " + associatedVar);
             active = waitingQueue.get(0);
             waitingQueue.remove(active);
-            if(OSGlobals.debug)
+            if(OSGlobals.debug&& semDebug)
                 System.out.println("[SEMAPHOR] Process: " + active.getProgName() + " taking control of semaphor " + associatedVar);
         }
         else
         {
             //active = caller;
-            if(OSGlobals.debug)
+            if(OSGlobals.debug&& semDebug)
                 System.out.println("[SEMAPHOR] Process: " + caller.getProgName() + " releasing control of semaphor " + associatedVar);
         }
         availible = true;

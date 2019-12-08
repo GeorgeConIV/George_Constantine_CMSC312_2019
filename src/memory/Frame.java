@@ -6,6 +6,7 @@ public class Frame
 {
     private Integer frameID;
     private Boolean free;
+    boolean memDebug = false;
     public Frame(Integer frameID)
     {
         this.frameID = frameID;
@@ -26,7 +27,7 @@ public class Frame
         }
         else
         {
-            if(OSGlobals.debug)
+            if(OSGlobals.debug && memDebug)
                 System.out.println("[MEMORY] Memory error: attempting to allocate memory that is allocated");
             return this;
         }
@@ -40,7 +41,7 @@ public class Frame
         }
         else
         {
-            if(OSGlobals.debug)
+            if(OSGlobals.debug && memDebug)
                 System.out.println("[MEMORY] Memory error: attempting to deallocate memory that is deallocated");
         }
     }
