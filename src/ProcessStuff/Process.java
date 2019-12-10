@@ -55,6 +55,8 @@ public class Process implements Comparable<Process>
     private String data;
     private int cycleCount = 0;
     private boolean isOrphan=false;
+    private Mailbox mail;
+    private int recievedData = -1;
 
     public static PageTable memoryMan;
     ProcessManager procMan;
@@ -65,7 +67,7 @@ public class Process implements Comparable<Process>
     SemManager sems;
 
     public Process(States state, String progName, Integer runtime,
-                   Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan, ProcessManager procMan, SemManager sems)
+                   Integer memory, List<Operation> operations, Integer priority, PageTable memoryMan, ProcessManager procMan, SemManager sems, Mailbox mail)
     {
         this.state = state;
         this.progName = progName;
@@ -77,6 +79,7 @@ public class Process implements Comparable<Process>
         this.priority = priority;
         this.procMan = procMan;
         this.sems = sems;
+        this.mail = mail;
         if(OSGlobals.debug)
             System.out.println("[PROCESS] Created process: " + progName);
 
@@ -113,9 +116,10 @@ public class Process implements Comparable<Process>
             if(getCurrentOp().critical())
             {
                 semNeeded = sems.getNeeded(getCurrentOp().getCritVar());
+                //mail = sems.getNeededMailbox(getCurrentOp().getCritVar());
                 if(getCurrentOp().getCyclesRemaining()==0) //!sems.checkWaiting(getCurrentOp().getCritVar(), this)
                 {
-                    semNeeded.signalSem(this);
+                    semNeeded.signalSem();
                     //System.out.println("\n SIGNAL \n" + this);
                     semAdded = true;
                 }
@@ -124,6 +128,29 @@ public class Process implements Comparable<Process>
                     semNeeded.waitSem(this);
                     //System.out.println("\n WAIT \n" + this);
                     semAdded = false;
+                }
+                if(getCurrentOp().getCyclesRemaining() == 25)
+                {
+                    if (mail.needsOwner)
+                    {
+                        mail.setOwner(this);
+                        int dat = (int) (Math.random() * (100));
+                        mail.setData(this, dat);
+                    }
+                    else
+                    {
+                        if(recievedData != mail.readData(this))
+                        {
+                            recievedData = mail.readData(this);
+                        }
+                    }
+                }
+                else if(getCurrentOp().getCyclesRemaining() < 25)
+                {
+                    if(recievedData != mail.readData(this))
+                    {
+                        recievedData = mail.readData(this);
+                    }
                 }
             }
 
@@ -144,6 +171,8 @@ public class Process implements Comparable<Process>
             if(programCounter == (operations.size()))
             {
                 setState(States.EXIT);
+                if(mail.owner.equals(this))
+                    mail.removeOwner();
             }
             else if(operations.get(programCounter) instanceof Out)
             {
@@ -246,10 +275,13 @@ public class Process implements Comparable<Process>
 
     public void killChild()
     {
+        if(mail.owner.equals(this))
+            mail.removeOwner();
         if(child.hasChild)
             child.killChild();
         hasChild = false;
         child.isOrphan = true;
+        child.setState(States.EXIT);
         memoryMan.deallocateMem(child.getMemSpace());
     }
 
@@ -295,6 +327,7 @@ public class Process implements Comparable<Process>
     public void killProc()
     {
         memoryMan.deallocateMem(memSpace);
+        setState(States.EXIT);
         if(hasParent)
         {
             parent.hasChild = false;

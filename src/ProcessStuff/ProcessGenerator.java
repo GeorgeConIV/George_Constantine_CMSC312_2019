@@ -19,6 +19,8 @@ public class ProcessGenerator
     PageTable memoryMan;
     SemManager sems;
     ProcessManager procMan;
+    Mailbox mailI = new Mailbox('m');
+    Mailbox mailJ = new Mailbox('b');
 
 
     public ProcessGenerator(PageTable memoryMan, SemManager sems, ProcessManager procMan)
@@ -38,16 +40,13 @@ public class ProcessGenerator
             genChild = Math.random();
             //Will randomly generate a process with a child process
             proc = generateProcess(genChild);
-            //Process child = generateProcess(amount, true);
-            //proc.createChild(child);
-            //child.setParent(proc);
+            //adds all children and grand children of a process
             do
             {
                 procs.add(proc);
                 if(proc.hasChild())
                     proc = proc.getChild();
             }while(proc.hasChild());
-            //procs.add(child);
 
             amount--;
 
@@ -55,6 +54,11 @@ public class ProcessGenerator
         return procs;
     }
 
+    /**
+     * Generates a process with random parameters and operations.
+     * @param hasChild used in the recursive generation of multi level parent-child relationships
+     * @return the process that was created
+     */
     private Process generateProcess(double hasChild)
     {
         opCount = Math.random();
@@ -86,35 +90,34 @@ public class ProcessGenerator
         varSel = (int) ((Math.random() * 5));
         priority = (int) (Math.random() * 10);
         //adding a critical section for each process, and a io operation for each process
-        opList.add(new Calculate(50, true, Optional.of(possibleVars.get(varSel))));
+        opList.add(new Calculate(50, true, Optional.of(possibleVars.get(1))));
         opList.add(new IOOp(10));
         String name;
         int memory = (int) (Math.random() * 160000000);
+        double mail = Math.random();
+        Mailbox mailb;
+        if(mail>0.5)
+            mailb = mailI;
+        else
+            mailb = mailJ;
         Process proc;
         if(hasChild > 0.5)
         {
             name = "P" + totalCount;
             totalCount++;
-            proc = new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems);
+            proc = new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems, mailb);
             genChild = Math.random();
             Process child = generateProcess(genChild);
             child.setParent(proc);
             proc.createChild(child);
-            //child.setProgName(proc.getProgName() + "'s child");
         }
         else
         {
             name = "P" + totalCount;
             totalCount++;
-            proc = new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems);
+            proc = new Process(Process.States.NEW, name, 300, memory, opList, priority, memoryMan, procMan, sems, mailb);
 
         }
-
-        if(proc.hasParent())
-        {
-            //proc.setProgName(proc.getParent().getProgName() + "'s child");
-        }
-
 
         return proc;
     }

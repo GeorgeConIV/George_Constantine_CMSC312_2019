@@ -1,3 +1,4 @@
+import ProcessStuff.Mailbox;
 import ProcessStuff.Process;
 import ProcessStuff.ProcessManager;
 import ProcessStuff.SemManager;
@@ -64,6 +65,7 @@ public class Parser
         String name;
         Integer runtime;
         Integer memory;
+        Mailbox m = new Mailbox('f');
         List<Operation> listOfOps;
 
         nameMatcher = patName.matcher(preParseString);
@@ -80,7 +82,7 @@ public class Parser
 
         listOfOps = getListOfCommands();
 
-        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0, mem, pMan, sMan);
+        prog = new Process(Process.States.NEW, name, runtime, memory, listOfOps, 0, mem, pMan, sMan,m);
         return prog;
     }
 

@@ -20,6 +20,10 @@ public class Semaphore
     }
 
 
+    /**
+     * allows a process to take control of a semaphor
+     * @param caller used to track the active process of the semaphor
+     */
     synchronized public void waitSem(Process caller)
     {
         if(availible && waitingQueue.isEmpty())
@@ -37,7 +41,10 @@ public class Semaphore
         }
     }
 
-    synchronized public void signalSem(Process caller) {
+    /**
+     * releases control of the semaphore and gets the next one in the waiting queue, if there is any in it.
+     */
+    synchronized public void signalSem() {
         if (!waitingQueue.isEmpty()){
             if(OSGlobals.debug&& semDebug)
                 System.out.println("[SEMAPHOR] Process: " + active.getProgName() + " releasing control of semaphor " + associatedVar);
@@ -50,7 +57,7 @@ public class Semaphore
         {
             //active = caller;
             if(OSGlobals.debug&& semDebug)
-                System.out.println("[SEMAPHOR] Process: " + caller.getProgName() + " releasing control of semaphor " + associatedVar);
+                System.out.println("[SEMAPHOR] Process: " + active.getProgName() + " releasing control of semaphor " + associatedVar);
         }
         availible = true;
     }
@@ -58,10 +65,11 @@ public class Semaphore
     synchronized public Process getCurrentProcess()
     {
         Process temp = active;
+        //used to release
         if(active.isOrphan())
-            signalSem(active);
+            signalSem();
         if(active.getState().equals(Process.States.EXIT))
-            signalSem(active);
+            signalSem();
 
         return temp;
     }

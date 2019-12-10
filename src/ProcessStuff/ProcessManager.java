@@ -13,7 +13,7 @@ public class ProcessManager
 {
     boolean verbose = false;
 
-    final Integer timeConstant = 50;
+    final Integer timeConstant = 25;
     Integer timeRemaining = timeConstant;
     Integer totalProcCount;
     boolean semAdded = true;
@@ -30,7 +30,11 @@ public class ProcessManager
 
     public ProcessManager() {}
 
-    //TODO: add the gosh darn threading stuff
+    /**
+     * initializes the process manager
+     * @param waitingQueue
+     * @throws ConcurrentModificationException
+     */
     public void initProcMan(List<Process> waitingQueue) throws ConcurrentModificationException
     {
         this.waitingQueue = waitingQueue;
@@ -54,6 +58,10 @@ public class ProcessManager
 
     }
 
+    /**
+     * IO manager. Similar to the scheduler, except that it's for IO operations.
+     * @param io
+     */
     synchronized public void handleIOInterrupt(IOEvent io)
     {
         if(!running.isEmpty())
@@ -115,6 +123,10 @@ public class ProcessManager
             removeFromWaitingQueue(active);
     }
 
+    /**
+     * round robin task scheduler.
+     * @param io an object that determines if an io interupt occurs
+     */
     synchronized public void runForTime(IOEvent io)
     {
         boolean testy = true;
@@ -147,6 +159,7 @@ public class ProcessManager
                 getNewActive();
             }
 
+            //if the instruction is IO, it gets added to the IO queue, and wait for an IO interupt
             else if(active.getCurrentOp() instanceof IOOp && !IOQueue.contains(active))
             {
                 removefromRunning(active);
@@ -172,6 +185,8 @@ public class ProcessManager
         }
     }
 
+    // process manager is considered complete when all processes without children are finished.
+    // If their child processes aren't done, too bad. They don't get to finish
     public boolean checkComplete()
     {
         boolean parentsDone = true;
@@ -215,6 +230,9 @@ public class ProcessManager
 
     private void killChild(Process daddy)
     {
+
+        if(daddy.getChild().hasChild())
+            killChild(daddy.getChild());
         if(waitingQueue.contains(daddy.getChild()))
             waitingQueue.remove(daddy.getChild());
         if(IOQueue.contains(daddy.getChild()))
@@ -232,11 +250,15 @@ public class ProcessManager
     {
         for(Process proc : newProcs)
         {
+            addToWaitingQueue(proc);
             if(!proc.hasParent())
                 parents.add(proc);
+            //only adds processes if there is enough memory
             if(proc.getMemSpace().isEmpty())
+            {
                 waitingQueue.remove(proc);
-            addToWaitingQueue(proc);
+            }
+
 
         }
     }

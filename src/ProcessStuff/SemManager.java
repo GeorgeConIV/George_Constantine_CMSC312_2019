@@ -6,12 +6,14 @@ import java.util.List;
 public class SemManager
 {
     List<Semaphore> sems = new ArrayList<>();
+    List<Mailbox> mailboxes = new ArrayList<>();
     Semaphore semI = new Semaphore('i');
     Semaphore semJ = new Semaphore('j');
     Semaphore semX = new Semaphore('x');
     Semaphore semY = new Semaphore('y');
     Semaphore semW = new Semaphore('w');
     Semaphore semZ = new Semaphore('z');
+
 
     public SemManager()
     {
