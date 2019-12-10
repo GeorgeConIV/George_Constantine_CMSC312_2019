@@ -38,6 +38,16 @@ public class PageTableEntry
         return validInvalidBit;
     }
 
+    public Integer getPageNum()
+    {
+        return page.getPageNum();
+    }
+
+    public void setPageNum(Integer pageNum)
+    {
+        page.setPageNum(pageNum);
+    }
+
     @Override
     public String toString()
     {

@@ -18,6 +18,9 @@ public class Frame
         return frameID;
     }
 
+    /**
+     * This is the equivalent to writing data to a frame in memory
+     */
     public Frame allocate()
     {
         if(free)
@@ -33,6 +36,9 @@ public class Frame
         }
     }
 
+    /**
+     * deletes the data in a frame and deallocates that frame in memory
+     */
     public void deallocate()
     {
         if(!free)
