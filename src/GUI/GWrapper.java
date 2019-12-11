@@ -1,6 +1,7 @@
 package GUI;
 
 import ProcessStuff.OSGlobals;
+import memory.PageTable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -11,9 +12,11 @@ public class GWrapper implements Runnable
 {
     JFrame frame;
     GUI g;
+    PageTable pt;
 
-    public GWrapper()
+    public GWrapper(PageTable pt)
     {
+        this.pt = pt;
         frame = new JFrame("GUI");
         g = new GUI();
         g.onOff.setSelected(true);
@@ -24,7 +27,7 @@ public class GWrapper implements Runnable
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        g.update();
+        g.update(pt.getMemRemaining());
         g.start.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 OSGlobals.start = true;
@@ -38,7 +41,7 @@ public class GWrapper implements Runnable
         while(OSGlobals.enable)
         {
             if(OSGlobals.start) {
-                g.update();
+                g.update(pt.getMemRemaining());
                 //SwingUtilities.updateComponentTreeUI(frame);
             }
             OSGlobals.threadEn[0] = !g.dis1.isSelected();

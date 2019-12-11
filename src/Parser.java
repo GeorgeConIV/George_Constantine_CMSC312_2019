@@ -1,7 +1,5 @@
-import ProcessStuff.Mailbox;
+import ProcessStuff.*;
 import ProcessStuff.Process;
-import ProcessStuff.ProcessManager;
-import ProcessStuff.SemManager;
 import commands.*;
 import memory.PageTable;
 
@@ -20,6 +18,7 @@ public class Parser
     String preParseOpString = "";
     Integer stringLoc = 0;
     char charBuff = ' ';
+    ProcessGenerator pGen;
 
     String nameRegex = "(Name: )([\\w ]*)";
     String runtimeRegex = "(Total runtime: )([0-9]*)";
@@ -38,12 +37,13 @@ public class Parser
 
 
 
-    public Parser(List<String> preParesed, PageTable mem, ProcessManager pMan, SemManager sMan)
+    public Parser(List<String> preParesed, PageTable mem, ProcessManager pMan, SemManager sMan, ProcessGenerator pGen)
     {
         this.mem = mem;
         this.preParsed = preParesed;
         this.pMan = pMan;
         this.sMan = sMan;
+        this.pGen = pGen;
         for(String s: preParesed)
         {
             preParseString = preParseString.concat(s + "\n");
@@ -65,7 +65,7 @@ public class Parser
         String name;
         Integer runtime;
         Integer memory;
-        Mailbox m = new Mailbox('f');
+        Mailbox m = pGen.mailI;
         List<Operation> listOfOps;
 
         nameMatcher = patName.matcher(preParseString);

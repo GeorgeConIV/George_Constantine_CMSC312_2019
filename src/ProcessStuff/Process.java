@@ -171,8 +171,10 @@ public class Process implements Comparable<Process>
             if(programCounter == (operations.size()))
             {
                 setState(States.EXIT);
-                if(mail.owner.equals(this))
-                    mail.removeOwner();
+                try {
+                    if (mail.owner.equals(this))
+                        mail.removeOwner();
+                } catch(NullPointerException e) {}
             }
             else if(operations.get(programCounter) instanceof Out)
             {

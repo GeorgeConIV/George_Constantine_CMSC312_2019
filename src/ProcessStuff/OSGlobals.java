@@ -5,7 +5,7 @@ import java.util.List;
 
 public class OSGlobals
 {
-    public static boolean debug = false;
+    public static boolean debug = true;
     public static int cycleCount = 0;
     public static int procsCompleted = 0;
     public static boolean genMore = false;

@@ -20,6 +20,7 @@ public class GUI{
     public JButton start;
     private JLabel warn;
     private JLabel warn2;
+    private JLabel pt;
 
     JFrame frame;
     public GUI()
@@ -27,10 +28,11 @@ public class GUI{
     }
 
 
-    public void update()
+    public void update(int mem)
     {
         this.cycleCount.setText("Cycle count: " + OSGlobals.cycleCount);
         this.completed.setText("# of processes completed: " + OSGlobals.procsCompleted);
+        this.pt.setText("# of free frames: " + mem);
         try {
             this.cyclesper.setText("Average # of cycles per process: " + (int) Math.floor(OSGlobals.cycleCount / OSGlobals.procsCompleted));
         } catch(ArithmeticException e)

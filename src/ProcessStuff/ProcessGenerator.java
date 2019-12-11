@@ -19,8 +19,8 @@ public class ProcessGenerator
     PageTable memoryMan;
     SemManager sems;
     ProcessManager procMan;
-    Mailbox mailI = new Mailbox('m');
-    Mailbox mailJ = new Mailbox('b');
+    public Mailbox mailI = new Mailbox('m');
+    public Mailbox mailJ = new Mailbox('b');
 
 
     public ProcessGenerator(PageTable memoryMan, SemManager sems, ProcessManager procMan)
@@ -93,7 +93,7 @@ public class ProcessGenerator
         opList.add(new Calculate(50, true, Optional.of(possibleVars.get(1))));
         opList.add(new IOOp(10));
         String name;
-        int memory = (int) (Math.random() * 160000000);
+        int memory = (int) (Math.random() * 160000);
         double mail = Math.random();
         Mailbox mailb;
         if(mail>0.5)
