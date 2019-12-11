@@ -149,6 +149,8 @@ public class Process implements Comparable<Process>
                 {
                     if(recievedData != mail.readData(this))
                     {
+                        if(OSGlobals.debug)
+                            System.out.println(getProgName() + " recieved data: " + recievedData + " on group: " + mail.associatedVar);
                         recievedData = mail.readData(this);
                     }
                 }
@@ -259,22 +261,6 @@ public class Process implements Comparable<Process>
 
     }
 
-    public void check()
-    {
-        if(hasParent)
-        {
-            Process temp = getParent();
-            String childCount = "c";
-            while (temp.hasParent)
-            {
-                childCount += "c";
-                if (temp.hasParent)
-                    temp = temp.getParent();
-            }
-            setProgName(progName + childCount);
-        }
-    }
-
     public void killChild()
     {
         if(mail.owner.equals(this))
@@ -290,11 +276,6 @@ public class Process implements Comparable<Process>
     public boolean isOrphan()
     {
         return isOrphan;
-    }
-
-    public List<PageTableEntry> getMemSpace()
-    {
-        return memSpace;
     }
 
     public Process getParent()
@@ -324,6 +305,11 @@ public class Process implements Comparable<Process>
     public boolean hasChild()
     {
         return hasChild;
+    }
+
+    public List<PageTableEntry> getMemSpace()
+    {
+        return memSpace;
     }
 
     public void killProc()

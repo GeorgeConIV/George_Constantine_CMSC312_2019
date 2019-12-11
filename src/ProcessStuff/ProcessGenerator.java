@@ -101,7 +101,7 @@ public class ProcessGenerator
         else
             mailb = mailJ;
         Process proc;
-        if(hasChild > 0.5)
+        if(hasChild > 0.7)
         {
             name = "P" + totalCount;
             totalCount++;

@@ -33,8 +33,7 @@ public class Mailbox
         readCount++;
         if(owner.getState().equals(Process.States.EXIT))
             needsOwner = true;
-        if(OSGlobals.debug)
-            System.out.println(caller.getProgName() + " recieved data: " + data + " on group: " + associatedVar);
+
         return data;
     }
 
